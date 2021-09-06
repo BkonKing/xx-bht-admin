@@ -1,0 +1,265 @@
+@import '~ant-design-vue/es/style/themes/default.less';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  overflow-y: auto;
+  background-color: #f0f2f5 !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  width: 6px;
+  background: rgba(#101f1c, 0.1);
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(#101f1c, 0.5);
+  background-clip: padding-box;
+  min-height: 28px;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(#101f1c, 1);
+}
+
+// 数据列表 样式
+.table-alert {
+  margin-bottom: 16px;
+}
+// 数据列表 操作
+.table-operator {
+  margin-bottom: 18px;
+
+  button {
+    margin-right: 8px;
+  }
+}
+// 数据列表 搜索条件
+.table-page-search-wrapper {
+  .ant-form-inline .ant-form-item > .ant-form-item-label {
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .ant-form-inline {
+    .ant-form-item {
+      display: flex;
+      margin-bottom: 24px;
+      margin-right: 0;
+
+      .ant-form-item-control-wrapper {
+        flex: 1 1;
+        width: 0;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      > .ant-form-item-label {
+        line-height: 32px;
+        padding-right: 8px;
+        width: auto;
+      }
+      .ant-form-item-control {
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+  }
+
+  .table-page-search-submitButtons {
+    display: block;
+    margin-bottom: 24px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+.color-1890FF {
+  color: #1890ff;
+}
+.color-F5222D {
+  color: #f5222d;
+}
+.color-00025 {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.popover-toast {
+  /deep/ .ant-popover-inner-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  /deep/ .ant-popover-arrow {
+    border-right-color: rgba(0, 0, 0, 0.7) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.7) !important;
+  }
+}
+
+// #app {
+//   background-color: #f0f2f5;
+// }
+div.ant-pro-grid-content.wide {
+  max-width: inherit;
+}
+
+.ant-table-wrapper {
+  .ant-table-pagination {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    float: none;
+  }
+  .ant-pagination-total-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.search-card {
+  .ant-card-body {
+    padding-bottom: 0;
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.color-red {
+  color: #f5222d;
+}
+
+.ant-form .ant-form-item .ant-form-item {
+  margin-bottom: 0;
+}
+
+// 页面头部的tab
+.ant-page-header-footer .ant-tabs-bar .ant-tabs-nav .ant-tabs-tab {
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1;
+}
+.ant-page-header-footer {
+  margin-top: 8px;
+}
+
+// 搜索card
+.search-card {
+  padding-bottom: 0;
+  .ant-card-body {
+    padding-bottom: 0;
+  }
+}
+
+// 表格操作列按钮
+.table-action {
+  > a + a {
+    margin-left: 10px;
+  }
+}
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td {
+  word-break: break-all;
+}
+
+.table-total-row {
+  padding: 16px 0;
+  font-weight: bold;
+  color: #000000d8;
+  > div {
+    padding: 0 16px;
+  }
+}
+
+.ant-modal-body {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.table-page-search-wrapper .table-page-search-submitButtons {
+  text-align: right;
+}
+
+// 必填字段后面加*
+.form-required-after::after {
+  display: inline-block;
+  margin-left: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}
+
+// 面包屑第一个不显示
+// .ant-breadcrumb {
+//   > span:first-child {
+//     display: none;
+//   }
+// }
+
+// 强制不换行
+.nowrap {
+  word-break: keep-all !important;
+  white-space: nowrap !important;
+}
+
+// 两个空格
+.two-blank {
+  margin-left: 14px;
+}
+
+.ant-card-body > .ant-form-horizontal:last-child > .ant-form-item:last-child {
+  margin-bottom: 0;
+}
+
+// 两行省略
+.two-Multi {
+  .textOverflowMultiLine();
+}
+
+// 详情头部右边状态
+.status-list {
+  display: flex;
+  justify-content: flex-end;
+  .text,.heading {
+    padding-left: 40px;
+  }
+}

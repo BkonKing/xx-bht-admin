@@ -1,0 +1,16 @@
+# https://editorconfig.org
+
+# 如果在根文件路径或找到带有root=true的EditorConfig文件，则将停止对.editorConfig文件的搜索。
+root = true 
+
+[*.{js,jsx,ts,tsx,vue}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+insert_final_newline = false
+trim_trailing_whitespace = false

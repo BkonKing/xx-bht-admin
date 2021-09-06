@@ -1,0 +1,50 @@
+@import '~ant-design-vue/es/style/themes/default.less';
+
+.ant-form-item-label, .ant-form-item-control {
+  line-height: 32px;
+}
+
+.ant-table-thead > tr > th {
+  border-top: 1px solid #e8e8e8;
+}
+.ant-table-content > :not(.ant-table-fixed-right) .ant-table-thead > tr > th:first-child {
+  border-left: 1px solid #e8e8e8;
+}
+.ant-table-content > :not(.ant-table-fixed-left) .ant-table-thead > tr > th:last-child {
+  border-right: 1px solid #e8e8e8;
+}
+
+.error-text {
+  color:@error-color;
+}
+
+// 搜索表格label固定宽度
+.table-page-fw-search-wrapper {
+  .ant-form-inline .ant-form-item > .ant-form-item-label {
+    width: 80px;
+  }
+}
+
+.ant-form-item-with-help {
+  margin-bottom: 24px;
+}
+
+.ant-select-dropdown-menu-item-selected {
+  background-color: #fff;
+}
+
+.ant-upload-list-picture .ant-upload-list-item, .ant-upload-list-picture-card .ant-upload-list-item {
+  padding: 10px 8px;
+}
+
+.ant-upload-list-picture .ant-upload-list-item-thumbnail {
+  width: 44px;
+  height: 44px;
+}
+
+.ant-upload-list-item-error path[fill = '#1890ff'] {
+  fill: #F5222D;
+}
+.ant-upload-list-item-error path[fill = '#e6f7ff'] {
+  fill: #f5222d1a;
+}
