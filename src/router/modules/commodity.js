@@ -34,6 +34,14 @@ export default {
       meta: {
         title: '编辑专题'
       }
+    },
+    {
+      path: '/commodity/goods/edit',
+      name: 'goodsEdit',
+      component: () => import(/* webpackChunkName: "goods" */ '@/views/commodity/goods/edit'),
+      meta: {
+        title: '编辑商品'
+      }
     }
   ]
 }

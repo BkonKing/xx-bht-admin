@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import pageMaps from './pageMaps'
 // import {
 //   UserLayout,
 //   BasicLayout
@@ -7,6 +8,38 @@ import Router from 'vue-router'
 //   BlankLayout
 // } from '@/layouts'
 // import userRoutes from './modules/user'
+
+/**
+ * 重写路由的push方法
+ */
+// 保存原来的push函数
+const routerPush = Router.prototype.push
+// 重写push函数
+Router.prototype.push = function push (location, onComplete, onAbort) {
+  if (process.env.NODE_ENV === 'production') {
+    let url = `#${location}`
+    if (typeof location !== 'string') {
+      url = this.resolve(location).href
+    }
+    const href = url.split('?')[0]
+    if (pageMaps[href]) {
+      const hash = encodeURIComponent(`/new_version/index.html${url}`)
+      const newHref = `/nsolid${pageMaps[href]}?url=${hash}`
+      // 如果重新跳转的地址跟顶层地址一样就刷新顶层页面
+      if ((top.location.origin + newHref) === top.location.href) {
+        top.location.reload()
+        return
+      }
+      top.location.href = newHref
+      return
+    } else {
+      // 调用原来的push函数，并捕获异常
+      return routerPush.call(this, location, onComplete, onAbort).catch(error => error)
+    }
+  }
+  // 调用原来的push函数，并捕获异常
+  return routerPush.call(this, location, onComplete, onAbort).catch(error => error)
+}
 
 Vue.use(Router)
 
@@ -31,6 +64,10 @@ export {
  * 基础路由
  * @type { *[] }
  */
+const constantRoutes = [{
+  path: '',
+  redirect: '/commodity'
+}]
 // export const constantRoutes = [{
 //     path: '/user',
 //     component: UserLayout,
@@ -79,7 +116,7 @@ const errorRoute = [{
 
 export default new Router({
   mode: process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'true' ? 'history' : 'hash',
-  routes: asyncRoutes.concat(errorRoute),
+  routes: constantRoutes.concat(asyncRoutes, errorRoute),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

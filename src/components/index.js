@@ -37,6 +37,7 @@ import Dialog from '@/components/Dialog'
 
 import QRCode from '@/components/QRCode'
 import TimeWait from '@/components/Time'
+import kindeditor from '@/components/kindeditor'
 
 export {
   AvatarList,
@@ -69,5 +70,6 @@ export {
   TImage,
   AdvancedForm,
   QRCode,
-  TimeWait
+  TimeWait,
+  kindeditor
 }

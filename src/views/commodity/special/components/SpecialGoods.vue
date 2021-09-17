@@ -28,7 +28,7 @@
             />
           </a-col>
           <a-col flex="160px">
-            <a-input v-model="group.combination_content"></a-input>
+            <a-input v-model="group.combination_content" placeholder="组名称"></a-input>
           </a-col>
           <a-col flex="200px">
             <upload-image
@@ -59,7 +59,11 @@
                 class="nested-tr"
               >
                 <a-col flex="70px"
-                  ><a :href="row.id">{{ row.id }}</a></a-col
+                  ><a
+                    :href="`/nsolid/commodity/goods?goods_id=${row.goods_id}`"
+                    target="_blank"
+                    >{{ row.goods_id }}</a
+                  ></a-col
                 >
                 <a-col flex="160px"
                   ><div class="two-Multi">{{ row.goods_name }}</div></a-col
@@ -176,7 +180,7 @@ export default {
   methods: {
     addGroup () {
       this.tableData.push({
-        combination_content: '',
+        combination_content: undefined,
         combination_pic: [],
         list_order: '',
         list: [],
@@ -256,8 +260,8 @@ export default {
   .xx-flex {
     display: flex;
     .xx-flex-label {
-      flex: 1;
-      width: 0;
+      width: 104px;
+      margin-right: 15px;
       .textOverflow();
     }
     .xx-flex-value {
@@ -267,8 +271,11 @@ export default {
   }
   /deep/ .ant-upload-list-picture-card-container,
   /deep/ .ant-upload.ant-upload-select-picture-card {
-    width: 45px;
+    width: 90px;
     height: 45px;
+    .ant-upload-list-item {
+      padding: 4px;
+    }
   }
   /deep/ .ant-upload-list-item-uploading-text {
     display: none;

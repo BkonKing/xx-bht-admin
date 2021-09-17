@@ -41,6 +41,29 @@
     </template>
 
     <a-card
+      title="微信分享"
+      class="intro-card"
+      style="margin-top: 24px"
+      :bordered="false"
+    >
+      <a-row type="flex">
+        <a-col flex="72px">分享标题：</a-col>
+        <a-col>{{ info.wx_sharelink || "--" }}</a-col>
+      </a-row>
+      <a-row type="flex">
+        <a-col flex="72px">分享图片：</a-col>
+        <a-col>
+          <t-image
+            v-if="info.wx_sharepic"
+            :images="[info.wx_sharepic]"
+            class="topic-image"
+          ></t-image>
+          <span v-else>--</span>
+        </a-col>
+      </a-row>
+    </a-card>
+
+    <a-card
       v-if="isListType"
       title="专题简介"
       class="intro-card"
@@ -81,9 +104,15 @@
         :columns="columns"
         :dataSource="info.combination"
         :pagination="false"
-        :expandedRowKeys="defaultExpandedRowKeys"
+        :expandedRowKeys="expandedRowKeys"
+        @expandedRowsChange="
+          expandedRowKeys => {
+            this.expandedRowKeys = expandedRowKeys;
+          }
+        "
       >
         <a-table
+          v-if="text.list && text.list.length"
           slot="expandedRowRender"
           slot-scope="text"
           rowKey="goods_id"
@@ -152,7 +181,7 @@ export default {
       info: {
         combination: []
       },
-      defaultExpandedRowKeys: [],
+      expandedRowKeys: [],
       columns: [
         {
           title: '序号',
@@ -176,7 +205,9 @@ export default {
           customRender: text => {
             if (text) {
               const src = [text]
-              const img = <t-image images={src} class="goods-image"></t-image>
+              const img = (
+                <t-image images={src} class="goods-image group-image"></t-image>
+              )
               return img
             } else {
               return ''
@@ -210,7 +241,12 @@ export default {
           width: 70,
           dataIndex: 'goods_id',
           customRender: (text, row) => {
-            return <a href={row.id}>{text}</a>
+            const url = `/nsolid/commodity/goods?goods_id=${text}`
+            return (
+              <a href={url} target="_blank">
+                {text}
+              </a>
+            )
           }
         },
         {
@@ -312,7 +348,11 @@ export default {
         special_id: this.id
       }).then(({ data }) => {
         this.info = data
-        this.defaultExpandedRowKeys = this.info.combination.map(obj => obj.combination_id)
+        if (this.isListType) {
+          this.expandedRowKeys = this.info.combination.map(
+            obj => obj.combination_id
+          )
+        }
       })
     },
     goEdit () {
@@ -359,6 +399,13 @@ export default {
     height: 45px;
   }
 }
+.group-image {
+  .image-box {
+    img {
+      width: 90px;
+    }
+  }
+}
 .topic-image img {
   max-width: 400px;
   max-height: 200px;
@@ -366,8 +413,8 @@ export default {
 .xx-flex {
   display: flex;
   .xx-flex-label {
-    flex: 1;
-    width: 0;
+    max-width: 104px;
+    margin-right: 15px;
     .textOverflow();
   }
   .xx-flex-value {

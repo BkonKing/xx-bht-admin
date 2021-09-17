@@ -16,7 +16,10 @@
           ></a-input>
         </a-form-model-item>
         <a-form-model-item required prop="is_open" label="是否开启">
-          <a-switch v-model="form.is_open" @change="$refs.BasicForm.validateField('time')"></a-switch>
+          <a-switch
+            v-model="form.is_open"
+            @change="$refs.BasicForm.validateField('time')"
+          ></a-switch>
           <a-form-model-item prop="time" style="margin-top: 10px;">
             <a-range-picker
               v-model="form.time"
@@ -39,6 +42,22 @@
             :options="permutationRadioGroup"
           />
         </a-form-model-item>
+        <a-form-model-item label="微信分享链接">
+          <a-input
+            v-model="form.wx_sharelink"
+            placeholder="标题"
+            :maxLength="50"
+          ></a-input>
+          <a-form-model-item style="margin-top: 10px;">
+            <upload-image
+              v-model="form.wx_sharepic"
+              maxLength="1"
+            ></upload-image>
+            <div style="margin-top: -11px;color: #00000072;">
+              尺寸750*600；支持扩展名：.png .jpg；
+            </div>
+          </a-form-model-item>
+        </a-form-model-item>
       </a-form-model>
     </a-card>
     <a-card
@@ -55,6 +74,7 @@
       >
         <a-form-model-item prop="introduction_image" label="简介图片">
           <upload-image
+            class="introduction-upload"
             v-model="introForm.introduction_image"
             maxLength="1"
           ></upload-image>
@@ -193,7 +213,9 @@ export default {
           is_open: data.is_open === 1,
           time: [data.stime, data.etime],
           type: data.content_type,
-          arrange: data.arrange
+          arrange: data.arrange,
+          wx_sharelink: data.wx_sharelink,
+          wx_sharepic: data.wx_sharepic ? [data.wx_sharepic] : []
         }
         // 商品专题简介
         this.introForm = {
@@ -209,7 +231,9 @@ export default {
       this.$nextTick(() => {
         if (this.isListType) {
           data.combination.forEach(obj => {
-            obj.combination_pic = obj.combination_pic ? [obj.combination_pic] : []
+            obj.combination_pic = obj.combination_pic
+              ? [obj.combination_pic]
+              : []
             obj.fold = true // 展开
             obj.list.forEach(goods => {
               goods.is_open = goods.is_open === '1'
@@ -260,19 +284,25 @@ export default {
     },
     // 专题商品列表数据格式化
     formatGoodsData () {
-      return this.$refs['special-goods'].tableData.map(obj => {
-        return {
-          combination_content: obj.combination_content,
-          combination_pic: obj.combination_pic[0] || '',
-          combination_type: 1,
-          list_order: obj.list_order,
-          list: obj.list.map(goods => ({
-            goods_id: goods.goods_id,
-            is_open: goods.is_open ? 1 : 0,
-            list_order: goods.list_order
-          }))
-        }
-      })
+      return this.$refs['special-goods'].tableData
+        .filter(obj => {
+          return (
+            obj.combination_content || obj.combination_pic[0] || obj.list.length
+          )
+        })
+        .map(obj => {
+          return {
+            combination_content: obj.combination_content,
+            combination_pic: obj.combination_pic[0] || '',
+            combination_type: 1,
+            list_order: obj.list_order,
+            list: obj.list.map(goods => ({
+              goods_id: goods.goods_id,
+              is_open: goods.is_open ? 1 : 0,
+              list_order: goods.list_order
+            }))
+          }
+        })
     },
     // 图片专题数据格式化
     formatImageData () {
@@ -296,6 +326,9 @@ export default {
       }
       if (params.introduction_image) {
         params.introduction_image = params.introduction_image[0] || ''
+      }
+      if (params.wx_sharepic) {
+        params.wx_sharepic = params.wx_sharepic[0] || ''
       }
       // 是否开启 1开启 2关闭
       params.is_open = params.is_open ? 1 : 2
@@ -322,8 +355,8 @@ export default {
   vertical-align: top;
   line-height: 32px;
 }
-/deep/ .ant-upload-list-picture-card-container,
-/deep/ .ant-upload.ant-upload-select-picture-card {
+.introduction-upload /deep/ .ant-upload-list-picture-card-container,
+.introduction-upload /deep/ .ant-upload.ant-upload-select-picture-card {
   width: 100%;
   height: 190px;
   margin-bottom: 0;

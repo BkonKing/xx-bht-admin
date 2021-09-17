@@ -42,7 +42,7 @@
 
 <script>
 import { UploadImage } from '@/components'
-import cloneDeep from 'lodash.clonedeep'
+// import cloneDeep from 'lodash.clonedeep'
 export default {
   name: 'cform',
   components: {

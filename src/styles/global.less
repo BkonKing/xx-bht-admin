@@ -263,3 +263,39 @@ div.ant-pro-grid-content.wide {
     padding-left: 40px;
   }
 }
+
+// 表单项提示文字
+.form-hint-text {
+  color: #00000072;
+}
+
+// 自定义编辑表格样式
+.edit-table {
+  &-header {
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+    > .ant-col {
+      padding: 6px 4px;
+    }
+  }
+  &-body {
+    > .ant-row-flex {
+      border-bottom: 1px solid #e8e8e8;
+      > .ant-col {
+        padding: 6px 4px;
+        line-height: 1;
+      }
+    }
+  }
+  .table-total {
+    font-weight: bold;
+    .ant-col {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+    }
+  }
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+}

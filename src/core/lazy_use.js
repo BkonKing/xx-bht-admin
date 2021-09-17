@@ -52,7 +52,8 @@ import {
   Tree,
   TreeSelect,
   Cascader,
-  Empty
+  Empty,
+  AutoComplete
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -119,6 +120,7 @@ Vue.use(Tree)
 Vue.use(TreeSelect)
 Vue.use(Cascader)
 Vue.use(Empty)
+Vue.use(AutoComplete)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

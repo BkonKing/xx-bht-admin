@@ -1,7 +1,7 @@
 <template>
   <div class="image-card">
     <div v-if="data.jump_name" class="jump-name">
-      {{ data.jump_type === 1 ? "跳转商品" : "跳转专题" }}{{ data.jump_name }}
+      {{ data.jump_type === 1 ? "跳转商品" : "跳转专题" }}：{{ data.jump_name }}
     </div>
     <div v-else>--</div>
     <t-image
@@ -43,6 +43,7 @@ export default {
 }
 .jump-name {
   width: 100%;
+  margin-bottom: 10px;
   .textOverflow();
 }
 </style>

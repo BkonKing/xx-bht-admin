@@ -7,13 +7,18 @@
     :file-list="fileList"
     multiple
     :beforeUpload="beforeUpload"
+    :data="
+      file => ({
+        type: needHost ? 2 : 1
+      })
+    "
     @preview="handlePreview"
     @change="handleChange"
   >
     <div v-if="fileList.length < maxLength">
       <a-icon type="plus" />
       <div class="ant-upload-text">
-        {{uploadText}}
+        {{ uploadText }}
       </div>
     </div>
   </a-upload>
@@ -35,13 +40,20 @@ export default {
     uploadText: {
       type: String,
       default: '上传'
+    },
+    needHost: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
     return {
       fileList: this.format(this.value),
       uploadList: [],
-      action: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : '/api'
+      action:
+        process.env.NODE_ENV === 'production'
+          ? process.env.VUE_APP_API_BASE_URL
+          : '/api'
     }
   },
   methods: {
@@ -113,13 +125,15 @@ export default {
         this.fileList.splice(this.fileList.length - 1, deleteCount)
       }
       if (file.status === 'done' || file.status === 'removed') {
-        const uploadList = fileList.map(obj => {
-          if (obj.response) {
-            return obj.response.data
-          }
-        }).filter(item => {
-          return item
-        })
+        const uploadList = fileList
+          .map(obj => {
+            if (obj.response) {
+              return obj.response.data
+            }
+          })
+          .filter(item => {
+            return item
+          })
         this.uploadList = uploadList
         this.$emit('input', uploadList)
       }

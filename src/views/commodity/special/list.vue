@@ -128,9 +128,19 @@ export default {
           sorter: true
         },
         {
-          title: '浏览量',
           dataIndex: 'visit_num',
-          sorter: true
+          sorter: true,
+          title: () => {
+            return <div>浏览量<a-tooltip>
+              <template slot="title">
+                  一个用户仅算一次
+              </template>
+              <a-icon
+                type="info-circle"
+                style="color: #797979;margin-top: 3px;margin-left: 3px;"
+              />
+            </a-tooltip></div>
+          }
         },
         {
           title: '专题状态',
