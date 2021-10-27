@@ -31,7 +31,7 @@ const assetsCDN = {
 
 // vue.config.js
 const vueConfig = {
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/new_version' : '/',
   configureWebpack: {
     // webpack plugins
     plugins: [
@@ -111,7 +111,7 @@ const vueConfig = {
 
   devServer: {
     // development server port 8000
-    port: 8000,
+    port: 5000,
     open: true,
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {

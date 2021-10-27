@@ -59,7 +59,7 @@
           <a-form-model-item prop="specs_name">
             <a-input
               v-model="group.specs_name"
-              placeholder="请输入"
+              placeholder="规格"
               v-max-byte-input="50"
             ></a-input>
           </a-form-model-item>
@@ -84,7 +84,6 @@
               v-model="group.s_price"
               v-number-input
               prefix="￥"
-              placeholder="请输入"
               @change="handleSPriceChange(group)"
             />
           </a-form-model-item>
@@ -96,7 +95,6 @@
               v-model="group.y_price"
               v-number-input
               prefix="￥"
-              placeholder="请输入"
             />
           </a-form-model-item>
         </a-col>
@@ -113,7 +111,6 @@
               v-model="group.e_price"
               v-number-input
               prefix="￥"
-              placeholder="请输入"
             />
           </a-form-model-item>
         </a-col>
@@ -158,7 +155,7 @@
         <!-- 排序 -->
         <a-col flex="90px">
           <a-form-model-item prop="list_order">
-            <a-input v-model="group.list_order" placeholder="请输入"></a-input>
+            <a-input v-model="group.list_order"></a-input>
           </a-form-model-item>
         </a-col>
         <!-- 试喝 -->
@@ -208,7 +205,7 @@
               <!-- 优享价 -->
               <a-col flex="1">￥{{ row.e_price }}</a-col>
               <!-- 关联仓库 -->
-              <a-col flex="1">{{ row.bind_info }}</a-col>
+              <a-col flex="1" v-html="row.bind_info"></a-col>
               <!-- 库存(可拍) -->
               <a-col flex="100px"
                 >{{ row.stock }}（{{ row.available_stock }}）</a-col

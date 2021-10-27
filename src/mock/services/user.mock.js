@@ -1,373 +1,863 @@
-import {
-  specailApi
-} from '@/api/commodity/specail'
+// import { goodsApi } from '@/api/commodity/goods'
 
-// export const UserMenu = [
-//   RegExp(specailApi.searchGoods),
+// export const getAllCategory = [
+//   RegExp(goodsApi.getAllCategory),
 //   'post',
 //   {
-//     code: '200',
+//     code: 200,
+//     message: '成功',
 //     success: true,
-//     message: 'OK',
 //     list: [
 //       {
+//         category_name: '茶叶',
 //         id: 1,
-//         goods_name: '见山·佛手【吟秋】八月'
+//         parent_id: 0,
+//         list_order: 0,
+//         children: [
+//           {
+//             category_name: '见山',
+//             id: 6,
+//             parent_id: 1,
+//             list_order: 0,
+//             children: ''
+//           },
+//           {
+//             category_name: '藏山',
+//             id: 7,
+//             parent_id: 1,
+//             list_order: 0,
+//             children: ''
+//           },
+//           {
+//             category_name: '忘山',
+//             id: 8,
+//             parent_id: 1,
+//             list_order: 0,
+//             children: ''
+//           }
+//         ]
 //       },
 //       {
+//         category_name: '测试',
 //         id: 2,
-//         goods_name: '测试测试测试测试商品'
+//         parent_id: 0,
+//         list_order: 0,
+//         children: ''
 //       },
 //       {
+//         category_name: '器具',
 //         id: 3,
-//         goods_name: '见山·水仙【吟秋】'
-//       },
-//       {
-//         id: 4,
-//         goods_name: '厚道·水仙'
-//       },
-//       {
-//         id: 5,
-//         goods_name: '见山·肉桂[观月]1'
-//       },
-//       {
-//         id: 6,
-//         goods_name: '厚道·肉桂'
-//       },
-//       {
-//         id: 7,
-//         goods_name: '见山·铁罗汉[观月]1'
-//       },
-//       {
-//         id: 8,
-//         goods_name: '2021年一月试喝茶'
-//       },
-//       {
-//         id: 9,
-//         goods_name: '八月会员试喝茶'
-//       },
-//       {
-//         id: 10,
-//         goods_name: '忘山·肉桂【咏月】1'
-//       },
-//       {
-//         id: 11,
-//         goods_name: '藏山·老枞【咏月】'
-//       },
-//       {
-//         id: 12,
-//         goods_name: '九月会员试喝茶'
-//       },
-//       {
-//         id: 13,
-//         goods_name: '会员专供|牛栏坑纯料肉桂【限量】'
-//       },
-//       {
-//         id: 14,
-//         goods_name: '限量礼盒'
-//       },
-//       {
-//         id: 15,
-//         goods_name: '见山·肉桂【霜华】'
-//       },
-//       {
-//         id: 16,
-//         goods_name: '见山·黄观音【霜华】2020年10月新茶'
-//       },
-//       {
-//         id: 17,
-//         goods_name: '十月会员试喝茶'
-//       },
-//       {
-//         id: 21,
-//         goods_name: '特级岩茶'
-//       },
-//       {
-//         id: 23,
-//         goods_name: '忘山·古井老枞【龙潜】 2020年11月新茶'
-//       },
-//       {
-//         id: 24,
-//         goods_name: '藏山·水帘洞肉桂【龙潜】 2020年11月新茶'
-//       },
-//       {
-//         id: 25,
-//         goods_name: '十一月会员试喝茶'
-//       },
-//       {
-//         id: 26,
-//         goods_name: '1.1元——厚道好茶包邮秒杀'
-//       },
-//       {
-//         id: 27,
-//         goods_name: '藏山·石乳[嘉平]2020年12月新茶'
-//       },
-//       {
-//         id: 28,
-//         goods_name: '藏山·状元大红袍[嘉平]'
-//       },
-//       {
-//         id: 29,
-//         goods_name: '十二月会员试喝茶'
-//       },
-//       {
-//         id: 30,
-//         goods_name: '见山·铁罗汉[观月]2020年12月新茶'
-//       },
-//       {
-//         id: 31,
-//         goods_name: '忘山·肉桂【咏月】'
-//       },
-//       {
-//         id: 32,
-//         goods_name: '见山·肉桂[花朝]'
-//       },
-//       {
-//         id: 33,
-//         goods_name: '弥陀岩·水仙[花朝]'
-//       },
-//       {
-//         id: 34,
-//         goods_name: '2021年二月试喝茶'
-//       },
-//       {
-//         id: 35,
-//         goods_name: '见山·佛手【吟秋】'
-//       },
-//       {
-//         id: 36,
-//         goods_name: '藏山·竹窠老枞【晓春】'
-//       },
-//       {
-//         id: 37,
-//         goods_name: '2021年三月试喝茶'
-//       },
-//       {
-//         id: 38,
-//         goods_name: '忘山·牛栏肉桂【清和】'
-//       },
-//       {
-//         id: 40,
-//         goods_name: '见山·肉桂【观月】'
-//       },
-//       {
-//         id: 41,
-//         goods_name: '2021年四月试喝茶'
-//       },
-//       {
-//         id: 42,
-//         goods_name: '忘山·古井老枞【龙潜】'
-//       },
-//       {
-//         id: 43,
-//         goods_name: '藏山·水帘洞肉桂【龙潜】'
-//       },
-//       {
-//         id: 44,
-//         goods_name: '2021年五月试喝茶'
-//       },
-//       {
-//         id: 45,
-//         goods_name: '藏山·石乳[嘉平]'
-//       },
-//       {
-//         id: 46,
-//         goods_name: '见山·铁罗汉[观月]'
-//       },
-//       {
-//         id: 47,
-//         goods_name: '2021年六月试喝茶'
-//       },
-//       {
-//         id: 48,
-//         goods_name: '见山·黄观音【霜华】'
-//       },
-//       {
-//         id: 49,
-//         goods_name: '藏山·白鸡冠【季夏】'
-//       },
-//       {
-//         id: 50,
-//         goods_name: '2021年七月试喝茶'
-//       }
-//     ]
-//   }
-// ]
-
-// export const getCategory = [
-//   RegExp(specailApi.getCategory),
-//   'post',
-//   {
-//     code: '200',
-//     success: true,
-//     message: 'OK',
-//     list: [
-//       {
-//         id: '1',
-//         category_name: '茶叶'
-//       },
-//       {
-//         id: '6',
-//         category_name: '见山'
-//       },
-//       {
-//         id: '7',
-//         category_name: '藏山'
-//       },
-//       {
-//         id: '8',
-//         category_name: '忘山'
-//       }
-//     ]
-//   }
-// ]
-
-// export const getGoods = [
-//   RegExp(specailApi.getGoods),
-//   'post',
-//   {
-//     code: '200',
-//     success: true,
-//     message: 'OK',
-//     list: [
-//       {
-//         id: 15,
-//         goods_name: '见山·肉桂【霜华】',
-//         thumb: '/library/uploads/image/20200924/20200924165825_92343.jpg',
-//         is_open: 1,
-//         category_id: '6',
-//         category_name: '见山',
-//         shelf: '上架'
-//       },
-//       {
-//         id: 16,
-//         goods_name: '肉桂',
-//         thumb: '/library/uploads/image/20200924/20200924165825_92343.jpg',
-//         is_open: 0,
-//         category_id: '6',
-//         category_name: '见山',
-//         shelf: '下架'
-//       }
-//     ]
-//   }
-// ]
-
-// export const getAllSpecial = [
-//   RegExp(specailApi.getAllSpecial),
-//   'post',
-//   {
-//     code: '200',
-//     success: true,
-//     message: 'OK',
-//     list: [
-//       {
-//         id: '6',
-//         title: '专题1'
-//       },
-//       {
-//         id: '7',
-//         title: '专题2'
-//       },
-//       {
-//         id: '8',
-//         title: '专题2'
-//       },
-//       {
-//         id: '33',
-//         title: '专题图文20210903'
-//       }
-//     ]
-//   }
-// ]
-
-// export const getSpecByGoodsId = [
-//   RegExp(specailApi.getSpecByGoodsId),
-//   'post',
-//   {
-//     code: '200',
-//     success: true,
-//     message: 'OK',
-//     list: [
-//       {
-//         id: 15,
-//         goods_name: '见山·黄观音【霜华】',
-//         spec_list: [
+//         parent_id: 0,
+//         list_order: 0,
+//         children: [
 //           {
-//             s_price: '42.00',
-//             vip_price: '37.00',
-//             e_price: '35.00',
-//             stock: 9,
-//             volume: 2,
-//             id: 85,
-//             specs_name: '8.3g/泡*6泡/盒',
-//             auction_stock: 7
+//             category_name: '茶杯',
+//             id: 4,
+//             parent_id: 3,
+//             list_order: 0,
+//             children: ''
 //           },
 //           {
-//             s_price: '84.00',
-//             vip_price: '74.00',
-//             e_price: '70.00',
-//             stock: 9,
-//             volume: 1,
-//             id: 86,
-//             specs_name: '8.3g/泡*12泡/盒',
-//             auction_stock: 8
-//           },
-//           {
-//             s_price: '210.00',
-//             vip_price: '185.00',
-//             e_price: '175.00',
-//             stock: 6,
-//             volume: 0,
-//             id: 88,
-//             specs_name: '8.3g/泡*30泡/盒',
-//             auction_stock: 6
+//             category_name: '酒杯',
+//             id: 5,
+//             parent_id: 3,
+//             list_order: 0,
+//             children: ''
 //           }
 //         ]
 //       }
-//       // {
-//       //   id: 49,
-//       //   goods_name: '黄观音',
-//       //   spec_list: [
-//       //     {
-//       //       s_price: '42.00',
-//       //       vip_price: '37.00',
-//       //       e_price: '35.00',
-//       //       stock: 9,
-//       //       volume: 2,
-//       //       id: 85,
-//       //       specs_name: '8.3g/泡*6泡/盒',
-//       //       auction_stock: 7
-//       //     }
-//       //   ]
-//       // }
 //     ]
 //   }
 // ]
 
-// import {
-//   userApi
-// } from '@/api/user'
-// import {
-//   asyncRoutes
-// } from '@/router'
-
-// const setMenu = (data) => {
-//   return data.map(obj => {
-//     delete obj.component
-//     if (obj.children && obj.children.length) {
-//       obj.children = setMenu(obj.children)
-//     }
-//     return obj
-//   })
-// }
-
-// export const UserMenu = [
-//   RegExp(userApi.UserMenu),
-//   'get',
+// export const getGoodSpec = [
+//   RegExp(goodsApi.getGoodSpec),
+//   'post',
 //   {
 //     code: '200',
+//     message: '请求成功',
 //     success: true,
-//     message: 'OK',
-//     data: setMenu(asyncRoutes)
+//     list: [
+//       {
+//         id: 5,
+//         name: '见山肉桂[观月]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 39
+//       },
+//       {
+//         id: 6,
+//         name: '见山肉桂[观月]02',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 9
+//       },
+//       {
+//         id: 7,
+//         name: '见山肉桂[观月]03',
+//         spec: '散茶（8.3克/泡）',
+//         num: 4
+//       },
+//       {
+//         id: 8,
+//         name: '见山铁罗汉[观月]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 13
+//       },
+//       {
+//         id: 9,
+//         name: '见山铁罗汉[观月]02',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 9
+//       },
+//       {
+//         id: 10,
+//         name: '见山铁罗汉[观月]03',
+//         spec: '散茶（8.3克/泡）',
+//         num: 18
+//       },
+//       {
+//         id: 11,
+//         name: '见山水仙[吟秋]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 5
+//       },
+//       {
+//         id: 12,
+//         name: '见山水仙[吟秋]02',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 6
+//       },
+//       {
+//         id: 13,
+//         name: '见山水仙[吟秋]03',
+//         spec: '30泡装（8.3克/泡）',
+//         num: 4
+//       },
+//       {
+//         id: 14,
+//         name: '见山水仙[吟秋]04',
+//         spec: '散茶（8.3克/泡）',
+//         num: 0
+//       },
+//       {
+//         id: 15,
+//         name: '见山佛手[吟秋]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 17
+//       },
+//       {
+//         id: 16,
+//         name: '见山佛手[吟秋]02',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 4
+//       },
+//       {
+//         id: 17,
+//         name: '见山佛手[吟秋]03',
+//         spec: '30泡装（8.3克/泡）',
+//         num: 0
+//       },
+//       {
+//         id: 18,
+//         name: '见山佛手[吟秋]04',
+//         spec: '散茶（8.3克/泡）',
+//         num: 8
+//       },
+//       {
+//         id: 19,
+//         name: '忘山·肉桂[咏月]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 37
+//       },
+//       {
+//         id: 20,
+//         name: '忘山·肉桂[咏月]02',
+//         spec: '散茶（8.3克/泡）',
+//         num: 5
+//       },
+//       {
+//         id: 21,
+//         name: '藏山·老枞[咏月]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 11
+//       },
+//       {
+//         id: 22,
+//         name: '藏山·老枞[咏月]02',
+//         spec: '散茶（8.3克/泡）',
+//         num: 0
+//       },
+//       {
+//         id: 23,
+//         name: '牛栏坑肉桂',
+//         spec: '单泡装（8.3克/泡）',
+//         num: 9
+//       },
+//       {
+//         id: 24,
+//         name: '限量牛肉礼盒',
+//         spec: '铜罐*1+竹盒*1',
+//         num: 19
+//       },
+//       {
+//         id: 25,
+//         name: '见山·肉桂[霜华]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 25
+//       },
+//       {
+//         id: 26,
+//         name: '见山·肉桂[霜华]02',
+//         spec: '30泡装（8.3克/泡）',
+//         num: 2
+//       },
+//       {
+//         id: 27,
+//         name: '见山·肉桂[霜华]03',
+//         spec: '散茶（8.3克/泡）',
+//         num: 4
+//       },
+//       {
+//         id: 28,
+//         name: '见山·黄观音[霜华]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 9
+//       },
+//       {
+//         id: 29,
+//         name: '见山·黄观音[霜华]02',
+//         spec: '30泡装（8.3克/泡）',
+//         num: 6
+//       },
+//       {
+//         id: 30,
+//         name: '见山·黄观音[霜华]03',
+//         spec: '散茶（8.3克/泡）',
+//         num: 25
+//       },
+//       {
+//         id: 31,
+//         name: '忘山·古井老枞[龙潜]01',
+//         spec: '3泡装（10克/泡）',
+//         num: 40
+//       },
+//       {
+//         id: 32,
+//         name: '忘山·古井老枞[龙潜]02',
+//         spec: '散茶（10克/泡）',
+//         num: 16
+//       },
+//       {
+//         id: 33,
+//         name: '藏山·水帘洞肉桂[龙潜]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 44
+//       },
+//       {
+//         id: 34,
+//         name: '藏山·水帘洞肉桂[龙潜]02',
+//         spec: '散茶（8.3克/泡）',
+//         num: 16
+//       },
+//       {
+//         id: 35,
+//         name: '藏山·石乳[嘉平]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 27
+//       },
+//       {
+//         id: 36,
+//         name: '藏山·石乳[嘉平]02',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 0
+//       },
+//       {
+//         id: 37,
+//         name: '藏山·石乳[嘉平]03',
+//         spec: '散茶（8.3克/泡）',
+//         num: 15
+//       },
+//       {
+//         id: 38,
+//         name: '藏山·状元大红袍[嘉平]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 23
+//       },
+//       {
+//         id: 39,
+//         name: '藏山·状元大红袍[嘉平]02',
+//         spec: '散茶（8.3克/泡）',
+//         num: 0
+//       },
+//       {
+//         id: 40,
+//         name: '见山·肉桂[花朝]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 11
+//       },
+//       {
+//         id: 41,
+//         name: '见山·肉桂[花朝]02',
+//         spec: '8.3克/泡',
+//         num: 15
+//       },
+//       {
+//         id: 42,
+//         name: '弥陀岩·水仙[花朝]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 10
+//       },
+//       {
+//         id: 43,
+//         name: '弥陀岩·水仙[花朝]02',
+//         spec: '8.3克/泡',
+//         num: 14
+//       },
+//       {
+//         id: 44,
+//         name: '藏山·竹窠老枞[春晓]01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 16
+//       },
+//       {
+//         id: 45,
+//         name: '藏山·竹窠老枞[春晓]02',
+//         spec: '8.3克/泡',
+//         num: 5
+//       },
+//       {
+//         id: 46,
+//         name: '忘山·牛栏坑肉桂[清和]01',
+//         spec: '3泡装（10克/泡）',
+//         num: 23
+//       },
+//       {
+//         id: 47,
+//         name: '忘山·牛栏坑肉桂[清和]02',
+//         spec: '10克/泡',
+//         num: 12
+//       },
+//       {
+//         id: 48,
+//         name: '见山·黄观音[霜华]04',
+//         spec: '12泡装（8.3克/泡）',
+//         num: 9
+//       },
+//       {
+//         id: 49,
+//         name: '见山·白鸡冠【季夏】01',
+//         spec: '6泡装（8.3克/泡）',
+//         num: 11
+//       },
+//       {
+//         id: 50,
+//         name: '见山·白鸡冠【季夏】02',
+//         spec: '散茶（8.3克/泡）',
+//         num: 16
+//       },
+//       {
+//         id: 51,
+//         name: '测试了',
+//         spec: '散茶（8.3克/泡）',
+//         num: 46
+//       }
+//     ]
 //   }
 // ]
+
+// export const getAllGoods = [
+//   RegExp(goodsApi.getAllGoods),
+//   'post',
+//   {
+//     code: 200,
+//     message: '成功',
+//     list: [
+//       {
+//         id: 1,
+//         goods_name: '见山·佛手【吟秋】八月',
+//         thumb: 'https://bht.com/library/uploads/image/20200804/20200804101230_74247.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 11,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103231_66456.jpg'
+//           },
+//           {
+//             id: 20,
+//             specs_name: '8.3g/泡*12泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103219_31837.png'
+//           },
+//           {
+//             id: 21,
+//             specs_name: '8.3g/泡*30泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103225_19578.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 2,
+//         goods_name: '测试测试测试测试商品',
+//         thumb: 'https://bht.com/library/uploads/image/20200513/20200513154841_27006.png',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 3,
+//             specs_name: '12泡',
+//             specs_img: '/library/uploads/image/20200513/20200513094818_32749.jpg'
+//           },
+//           {
+//             id: 4,
+//             specs_name: '1泡',
+//             specs_img: '/library/uploads/image/20200513/20200513094920_50144.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 3,
+//         goods_name: '见山·水仙【吟秋】',
+//         thumb: 'https://bht.com/library/uploads/image/20200804/20200804101727_89876.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 5,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103122_66549.jpg'
+//           },
+//           {
+//             id: 22,
+//             specs_name: '8.3g/泡*12泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103128_30655.png'
+//           },
+//           {
+//             id: 23,
+//             specs_name: '8.3g/泡*30泡/盒',
+//             specs_img: '/library/uploads/image/20200804/20200804103135_28848.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 11,
+//         goods_name: '藏山·老枞【咏月】',
+//         thumb: 'https://bht.com/library/uploads/image/20200904/20200904170207_74103.jpg',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 26,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20200904/20200904165907_79577.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 13,
+//         goods_name: '会员专供|牛栏坑纯料肉桂【限量】',
+//         thumb: 'https://bht.com/library/uploads/image/20200928/20200928162302_17001.jpg',
+//         is_open: true,
+//         category_id: 1,
+//         category_name: '茶叶',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 31,
+//             specs_name: '8.3g/泡*1泡/盒',
+//             specs_img: '/library/uploads/image/20200928/20200928162309_67886.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 14,
+//         goods_name: '限量礼盒',
+//         thumb: 'https://bht.com/library/uploads/image/20200914/20200914134412_58871.jpg',
+//         is_open: true,
+//         category_id: 1,
+//         category_name: '茶叶',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 33,
+//             specs_name: '12cm*12cm*11cm',
+//             specs_img: '/library/uploads/image/20200914/20200914134144_19914.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 15,
+//         goods_name: '见山·肉桂【霜华】',
+//         thumb: 'https://bht.com/library/uploads/image/20200924/20200924165825_92343.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 34,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20200928/20200928155750_41761.jpg'
+//           },
+//           {
+//             id: 35,
+//             specs_name: '8.3g/泡*30泡/盒',
+//             specs_img: '/library/uploads/image/20200924/20200924165736_11808.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 28,
+//         goods_name: '藏山·状元大红袍[嘉平]',
+//         thumb: 'https://bht.com/library/uploads/image/20201130/20201130182111_57410.jpg',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 55,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20201130/20201130182102_14255.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 31,
+//         goods_name: '忘山·肉桂【咏月】',
+//         thumb: 'https://bht.com/library/uploads/image/20201230/20201230103119_32624.jpg',
+//         is_open: true,
+//         category_id: 8,
+//         category_name: '忘山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 60,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20201230/20201230103032_92302.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 32,
+//         goods_name: '见山·肉桂[花朝]',
+//         thumb: 'https://bht.com/library/uploads/image/20210126/20210126144218_45844.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 61,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210126/20210126144148_87588.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 33,
+//         goods_name: '弥陀岩·水仙[花朝]',
+//         thumb: 'https://bht.com/library/uploads/image/20210126/20210126144703_72043.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 62,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210126/20210126144647_73598.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 35,
+//         goods_name: '见山·佛手【吟秋】',
+//         thumb: 'https://bht.com/library/uploads/image/20210225/20210225154105_34283.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 65,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210225/20210225152834_76790.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 36,
+//         goods_name: '藏山·竹窠老枞【晓春】',
+//         thumb: 'https://bht.com/library/uploads/image/20210301/20210301112303_20416.jpg',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 66,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210301/20210301112138_46709.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 38,
+//         goods_name: '忘山·牛栏肉桂【清和】',
+//         thumb: 'https://bht.com/library/uploads/image/20210322/20210322144411_10307.jpg',
+//         is_open: true,
+//         category_id: 8,
+//         category_name: '忘山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 69,
+//             specs_name: '10g/泡*3泡/盒',
+//             specs_img: '/library/uploads/image/20210322/20210322144404_99414.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 40,
+//         goods_name: '见山·肉桂【观月】',
+//         thumb: 'https://bht.com/library/uploads/image/20210322/20210322151722_13814.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 72,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210322/20210322151554_59316.jpg'
+//           },
+//           {
+//             id: 73,
+//             specs_name: '8.3g/泡*12泡/盒',
+//             specs_img: '/library/uploads/image/20210322/20210322151639_96645.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 42,
+//         goods_name: '忘山·古井老枞【龙潜】',
+//         thumb: 'https://bht.com/library/uploads/image/20210428/20210428094212_91042.jpg',
+//         is_open: true,
+//         category_id: 8,
+//         category_name: '忘山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 76,
+//             specs_name: '10g/泡*3泡/盒',
+//             specs_img: '/library/uploads/image/20210428/20210428093246_60619.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 43,
+//         goods_name: '藏山·水帘洞肉桂【龙潜】',
+//         thumb: 'https://bht.com/library/uploads/image/20210428/20210428094845_20431.jpg',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 77,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210428/20210428094634_95517.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 46,
+//         goods_name: '见山·铁罗汉[观月]',
+//         thumb: 'https://bht.com/library/uploads/image/20210528/20210528111200_86493.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 81,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210528/20210528110957_57067.jpg'
+//           },
+//           {
+//             id: 82,
+//             specs_name: '8.3g/泡*12泡/盒',
+//             specs_img: '/library/uploads/image/20210528/20210528111019_51550.png'
+//           }
+//         ]
+//       },
+//       {
+//         id: 48,
+//         goods_name: '见山·黄观音【霜华】',
+//         thumb: 'https://bht.com/library/uploads/image/20210629/20210629112902_32564.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 85,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210629/20210629102951_60794.jpg'
+//           },
+//           {
+//             id: 86,
+//             specs_name: '8.3g/泡*12泡/盒',
+//             specs_img: '/library/uploads/image/20210629/20210629103103_25086.jpg'
+//           },
+//           {
+//             id: 88,
+//             specs_name: '8.3g/泡*30泡/盒',
+//             specs_img: '/library/uploads/image/20210629/20210629111648_75035.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 49,
+//         goods_name: '藏山·白鸡冠【季夏】',
+//         thumb: 'https://bht.com/library/uploads/image/20210629/20210629105416_40393.jpg',
+//         is_open: true,
+//         category_id: 7,
+//         category_name: '藏山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 87,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210629/20210629105001_86672.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 51,
+//         goods_name: '见山·肉桂[花朝]-2021.8',
+//         thumb: 'https://bht.com/library/uploads/image/20210810/20210810093750_45745.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 91,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210810/20210810093638_77512.jpg'
+//           }
+//         ]
+//       },
+//       {
+//         id: 52,
+//         goods_name: '见山·奇兰[桂月]',
+//         thumb: 'https://bht.com/library/uploads/image/20210810/20210810094145_64448.jpg',
+//         is_open: true,
+//         category_id: 6,
+//         category_name: '见山',
+//         shelf: '上架',
+//         spec_list: [
+//           {
+//             id: 92,
+//             specs_name: '8.3g/泡*6泡/盒',
+//             specs_img: '/library/uploads/image/20210810/20210810094103_60745.jpg'
+//           }
+//         ]
+//       }
+//     ],
+//     success: true
+//   }
+// ]
+
+// export const getSpecInfo = [
+//   RegExp(goodsApi.getSpecInfo),
+//   'post',
+//   {
+//     code: 200,
+//     message: '请求成功',
+//     success: true,
+//     list: [
+//       {
+//         s_price: '0.03',
+//         y_price: '120.00',
+//         vip_price: '0.03',
+//         e_price: '0.01',
+//         stock: 983,
+//         bind_product_id: 0,
+//         specs_img: '/library/uploads/image/20200513/20200513092049_58852.jpg',
+//         specs_name: '6泡',
+//         goods_id: 11,
+//         available_stock: 983,
+//         bind_info: '',
+//         goods_name: '见山·佛手【吟秋】八月'
+//       }
+//     ]
+//   }
+// ]
+
+// export const getSeller = [
+//   RegExp(goodsApi.getSeller),
+//   'post',
+//   {
+//     code: 200,
+//     message: '请求成功',
+//     success: true,
+//     list: [
+//       {
+//         id: '1',
+//         seller_name: '商家1',
+//         region: '福州'
+//       },
+//       {
+//         id: '2',
+//         seller_name: '商家2',
+//         region: '福州'
+//       },
+//       {
+//         id: '3',
+//         seller_name: '三月兔旗舰店',
+//         region: '福州'
+//       },
+//       {
+//         id: '7',
+//         seller_name: '商家',
+//         region: '福州'
+//       },
+//       {
+//         id: '8',
+//         seller_name: '肖彩云',
+//         region: '福州'
+//       },
+//       {
+//         id: '9',
+//         seller_name: '七月试喝茶',
+//         region: '福州'
+//       },
+//       {
+//         id: '10',
+//         seller_name: '222',
+//         region: '福州'
+//       }
+//     ]
+//   }
+// ]
+
+// // export const UserMenu = [
+// //   RegExp(userApi.UserMenu),
+// //   'get',
+// //   {
+// //     code: '200',
+// //     success: true,
+// //     message: 'OK',
+// //     data: setMenu(asyncRoutes)
+// //   }
+// // ]

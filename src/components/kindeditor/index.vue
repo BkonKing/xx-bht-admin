@@ -19,6 +19,10 @@ export default {
     id: {
       type: String,
       default: 'xx-kindeditor'
+    },
+    height: {
+      type: Number,
+      default: 390
     }
   },
   data () {
@@ -53,7 +57,7 @@ export default {
           // 指定浏览远程图片的服务器端程序
           allowFileManager: false,
           allowImageManager: true,
-          height: 390,
+          height: that.height,
           afterBlur: function () {
             this.sync()
           },
@@ -85,4 +89,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.ke-container {
+  width: 100% !important;
+}
+</style>

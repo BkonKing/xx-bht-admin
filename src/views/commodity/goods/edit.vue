@@ -48,7 +48,39 @@
             :dropdownMenuStyle="{ display: 'none' }"
           >
           </a-select>
-          <div class="form-hint-text">用于商品搜索匹配</div>
+          <div class="form-hint-text">
+            输入单个词，结尾加enter键自动创建一个词，用于商品搜索匹配
+          </div>
+        </a-form-model-item>
+        <a-form-model-item label="上下架定时">
+          <a-form-model-item prop="mount_time">
+            <a-row type="flex">
+              <a-col class="date-before">上架</a-col>
+              <a-col flex="1">
+                <a-date-picker
+                  v-model="form.mount_time"
+                  :disabled-date="disabledStartDate"
+                  :show-time="{ defaultValue: defaultTime }"
+                  valueFormat="YYYY-MM-DD HH:mm:ss"
+                  placeholder="请选择"
+                />
+              </a-col>
+            </a-row>
+          </a-form-model-item>
+          <a-form-model-item prop="descend_time" style="margin-top: 20px;">
+            <a-row type="flex">
+              <a-col class="date-before">下架</a-col>
+              <a-col flex="1">
+                <a-date-picker
+                  v-model="form.descend_time"
+                  :disabled-date="disabledEndDate"
+                  :show-time="{ defaultValue: defaultTime }"
+                  valueFormat="YYYY-MM-DD HH:mm:ss"
+                  placeholder="请选择"
+                />
+              </a-col>
+            </a-row>
+          </a-form-model-item>
         </a-form-model-item>
       </a-form-model>
     </a-card>
@@ -101,14 +133,14 @@
                 <a-date-picker
                   v-model="sellForm.quota_time"
                   :show-time="{ defaultValue: defaultTime }"
-                  placeholder="请选择"
+                  placeholder="开始时间"
                   valueFormat="YYYY-MM-DD HH:mm:ss"
                 />
               </a-form-model-item>
             </a-col>
           </a-row>
           <div class="form-hint-text">
-            在设置的时间段内对用户进行购买数量限制
+            在设置的时间开始对用户进行购买数量限制
           </div>
         </a-form-model-item>
       </a-form-model>
@@ -146,6 +178,7 @@
         <a-form-model-item required prop="content" label="详情描述">
           <kindeditor
             v-model="imageTextForm.content"
+            :height="500"
             @input="$refs.imageTextForm.validateField('content')"
           ></kindeditor>
         </a-form-model-item>
@@ -198,6 +231,13 @@ export default {
         callback()
       }
     }
+    const endTime = (rule, value, callback) => {
+      if (moment(this.form.descend_time).isBefore(this.form.mount_time)) {
+        callback(new Error('下架时间必须大于上架时间'))
+      } else {
+        callback()
+      }
+    }
     return {
       goodsId: '',
       defaultTime: moment('00:00:00', 'HH:mm:ss'),
@@ -208,6 +248,8 @@ export default {
         category_id: undefined, // 商品分类
         goods_name: '',
         sub_title: '',
+        mount_time: '',
+        descend_time: '',
         keyword: []
       },
       categoryOptions: [],
@@ -215,7 +257,8 @@ export default {
       rules: {
         category_id: [{ required: true, message: '请选择商品分类' }],
         goods_name: [{ required: true, message: '请输入商品标题' }],
-        sub_title: [{ required: true, message: '请输入商品副标题' }]
+        sub_title: [{ required: true, message: '请输入商品副标题' }],
+        descend_time: { validator: endTime }
       },
       sellForm: {
         discount_vip: '',
@@ -267,6 +310,22 @@ export default {
         this.categoryOptions = list
       })
     },
+    disabledStartDate (startValue) {
+      const startMomentValue = moment(startValue, 'YYYY-MM-DD HH:mm:ss')
+      const endMomentValue = moment(this.form.descend_time, 'YYYY-MM-DD HH:mm:ss')
+      if (!startMomentValue || !endMomentValue) {
+        return false
+      }
+      return startMomentValue.valueOf() > endMomentValue.valueOf()
+    },
+    disabledEndDate (endValue) {
+      const startMomentValue = moment(this.form.mount_time, 'YYYY-MM-DD HH:mm:ss')
+      const endMomentValue = moment(endValue, 'YYYY-MM-DD HH:mm:ss')
+      if (!endMomentValue || !startMomentValue) {
+        return false
+      }
+      return startMomentValue.valueOf() >= endMomentValue.valueOf()
+    },
     // 获取编辑商品的信息
     getEditGoods () {
       getEditGoods({
@@ -284,14 +343,22 @@ export default {
           buying_roles,
           thumb,
           pic_url_arr,
-          content
+          content,
+          mount_time,
+          descend_time
         } = goods_info
         this.form = {
           category_id,
           goods_name,
           sub_title,
           keyword: keyword ? keyword.split('|') : [],
-          goods_id: id
+          goods_id: id,
+          mount_time: +mount_time
+            ? moment(mount_time * 1000).format('YYYY-MM-DD HH:mm:ss') + ''
+            : '',
+          descend_time: +descend_time
+            ? moment(descend_time * 1000).format('YYYY-MM-DD HH:mm:ss') + ''
+            : ''
         }
         this.sellForm = {
           discount_vip: discount_vip * 100,
@@ -304,16 +371,20 @@ export default {
           pic: pic_url_arr || [],
           content
         }
-        this.$refs['supplier-table'].supplierData = seller_goods_list.map(obj => {
-          obj.seller_is_open = !!+obj.is_open
-          return obj
-        })
+        this.$refs['supplier-table'].supplierData = seller_goods_list.map(
+          obj => {
+            obj.seller_is_open = !!+obj.is_open
+            return obj
+          }
+        )
         this.$refs['model-table'].tableData = goods_specs_list.map(obj => {
           obj.specs_img = obj.specs_img ? [obj.specs_img] : ''
           obj.is_show = !!+obj.is_show
           obj.is_combination = !!+obj.is_combination
           obj.s_type = !!+obj.s_type
-          obj.bind_product_id = +obj.bind_product_id ? obj.bind_product_id : undefined
+          obj.bind_product_id = +obj.bind_product_id
+            ? obj.bind_product_id
+            : undefined
           if (obj.combination_spec && obj.combination_spec !== '0') {
             obj.combination_spec = obj.combination_spec.map(obj => {
               obj.s_type = !!+obj.s_type
@@ -366,7 +437,9 @@ export default {
         obj.s_type = obj.s_type ? 1 : 0
         obj.specs_img = obj.specs_img[0] || ''
         // 商品规格只保存规格id
-        obj.combination_spec = obj.combination_spec.map(model => model.specs_id)
+        obj.combination_spec = obj.combination_spec.map(
+          model => model.specs_id
+        )
         return obj
       })
       // 组合商品存到combination，非组合存到spec
@@ -410,5 +483,12 @@ export default {
   width: 100%;
   height: 190px;
   margin-bottom: 0;
+}
+.date-before {
+  height: 32px;
+  padding: 4px 11px;
+  line-height: 24px;
+  border: 1px solid #d9d9d9;
+  border-right: none;
 }
 </style>

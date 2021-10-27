@@ -54,6 +54,7 @@
       :expandIconColumnIndex="0"
       :dataSource="tableData"
       :pagination="false"
+      :scroll="{ y: 380 }"
     >
       <a-table
         v-if="text.spec_list && text.spec_list.length"
@@ -134,7 +135,7 @@ export default {
           }
         },
         {
-          title: '商品名称',
+          title: '商品/规格名称',
           dataIndex: 'goods_name'
         },
         {
