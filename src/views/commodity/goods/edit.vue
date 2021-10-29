@@ -63,6 +63,8 @@
                   :show-time="{ defaultValue: defaultTime }"
                   valueFormat="YYYY-MM-DD HH:mm:ss"
                   placeholder="请选择"
+                  @ok="$refs.BasicForm.validateField('descend_time')"
+                  @blur="$refs.BasicForm.validateField('descend_time')"
                 />
               </a-col>
             </a-row>
@@ -77,10 +79,19 @@
                   :show-time="{ defaultValue: defaultTime }"
                   valueFormat="YYYY-MM-DD HH:mm:ss"
                   placeholder="请选择"
+                  @ok="$refs.BasicForm.validateField('descend_time')"
                 />
               </a-col>
             </a-row>
           </a-form-model-item>
+        </a-form-model-item>
+        <a-form-model-item label="排序" prop="list_order">
+          <a-input
+            v-model="form.list_order"
+            v-number-input
+            palceholder="排序值"
+            style="width: 246px;"
+          ></a-input>
         </a-form-model-item>
       </a-form-model>
     </a-card>
@@ -232,8 +243,12 @@ export default {
       }
     }
     const endTime = (rule, value, callback) => {
-      if (moment(this.form.descend_time).isBefore(this.form.mount_time)) {
+      const startValue = this.form.mount_time
+      const endValue = this.form.descend_time
+      if (moment(endValue).isBefore(startValue)) {
         callback(new Error('下架时间必须大于上架时间'))
+      } else if (!startValue && moment(endValue).isBefore(moment())) {
+        callback(new Error('下架时间必须大于等于今天'))
       } else {
         callback()
       }
@@ -311,20 +326,22 @@ export default {
       })
     },
     disabledStartDate (startValue) {
-      const startMomentValue = moment(startValue, 'YYYY-MM-DD HH:mm:ss')
-      const endMomentValue = moment(this.form.descend_time, 'YYYY-MM-DD HH:mm:ss')
-      if (!startMomentValue || !endMomentValue) {
+      const endValue = this.form.descend_time
+      // 去除时分秒
+      const startMomentValue = moment(startValue.format('YYYY-MM-DD'))
+      if (!endValue) {
         return false
       }
-      return startMomentValue.valueOf() > endMomentValue.valueOf()
+      return startMomentValue.valueOf() > moment(endValue).valueOf()
     },
     disabledEndDate (endValue) {
-      const startMomentValue = moment(this.form.mount_time, 'YYYY-MM-DD HH:mm:ss')
-      const endMomentValue = moment(endValue, 'YYYY-MM-DD HH:mm:ss')
-      if (!endMomentValue || !startMomentValue) {
-        return false
+      const startValue = this.form.mount_time
+      const endMomentValue = moment(endValue).valueOf()
+      // 没有开始时间，则结束时间要大于等于今天
+      if (!startValue) {
+        return moment().startOf('day').valueOf() > endMomentValue
       }
-      return startMomentValue.valueOf() >= endMomentValue.valueOf()
+      return moment(startValue).startOf('day').valueOf() > endMomentValue
     },
     // 获取编辑商品的信息
     getEditGoods () {
@@ -345,7 +362,8 @@ export default {
           pic_url_arr,
           content,
           mount_time,
-          descend_time
+          descend_time,
+          list_order
         } = goods_info
         this.form = {
           category_id,
@@ -353,6 +371,7 @@ export default {
           sub_title,
           keyword: keyword ? keyword.split('|') : [],
           goods_id: id,
+          list_order: list_order,
           mount_time: +mount_time
             ? moment(mount_time * 1000).format('YYYY-MM-DD HH:mm:ss') + ''
             : '',
