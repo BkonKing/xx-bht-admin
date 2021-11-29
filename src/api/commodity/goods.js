@@ -21,9 +21,14 @@ export function getAllCategory (data) {
 
 // 获取仓库系统的商品
 export function getGoodSpec () {
+  const {
+    VUE_APP_PRODUCTION_HOST: productionHost,
+    VUE_APP_TEST_STORE: testStoreUrl,
+    VUE_APP_PRODUCTION_STORE: productionStoreUrl
+  } = process.env
   return request({
     url: goodsApi.getGoodSpec,
-    baseURL: 'https://bhtckdevelop.mhshjy.com',
+    baseURL: location.host === productionHost ? productionStoreUrl : testStoreUrl,
     method: 'get'
   })
 }

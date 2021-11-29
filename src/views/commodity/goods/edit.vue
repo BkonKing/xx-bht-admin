@@ -35,9 +35,9 @@
           <a-input
             v-model="form.sub_title"
             placeholder="请输入"
-            v-max-byte-input="30"
+            v-max-byte-input="60"
           ></a-input>
-          <div class="form-hint-text">最多允许输入15个汉字（30个字符）</div>
+          <div class="form-hint-text">最多允许输入30个汉字（60个字符）</div>
         </a-form-model-item>
         <a-form-model-item prop="keyword" label="商品关键词">
           <a-select
