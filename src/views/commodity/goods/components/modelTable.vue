@@ -315,16 +315,18 @@ export default {
       if (!data || !data.length) {
         return ''
       }
-      let stock = 0
-      let index = 0
+      let minIndex = 0
       // let astock = 0
-      data.forEach((obj, i) => {
+      data.reduce((previousValue, currentValue, index) => {
         // 取小值和对应的i
-        parseFloat(obj.stock) < stock && (index = i)
-        stock = parseFloat(obj.stock) > stock ? stock : obj.stock
-        // astock = parseFloat(obj.available_stock) > astock ? astock : obj.available_stock
-      })
-      return `${data[index].stock}（${data[index].available_stock}）`
+        const cur = parseFloat(currentValue.stock)
+        const status = cur > previousValue
+        if (status) {
+          minIndex = index
+        }
+        return status ? previousValue : cur
+      }, 0)
+      return `${data[minIndex].stock}（${data[minIndex].available_stock}）`
     }
   },
   watch: {

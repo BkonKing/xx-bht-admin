@@ -316,7 +316,7 @@ export default {
   methods: {
     init () {
       this.goodsId = this.$route.query.id
-      this.getEditGoods()
+      this.goodsId && this.getEditGoods()
       this.getAllCategory()
     },
     // 获取仓库系统的商品
@@ -455,10 +455,12 @@ export default {
         obj.is_show = obj.is_show ? 1 : 0
         obj.s_type = obj.s_type ? 1 : 0
         obj.specs_img = obj.specs_img[0] || ''
-        // 商品规格只保存规格id
-        obj.combination_spec = obj.combination_spec.map(
-          model => model.specs_id
-        )
+        if (Array.isArray(obj.combination_spec)) {
+          // 商品规格只保存规格id
+          obj.combination_spec = obj.combination_spec.map(
+            model => model.specs_id
+          ).filter(value => value)
+        }
         return obj
       })
       // 组合商品存到combination，非组合存到spec
