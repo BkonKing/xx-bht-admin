@@ -18,30 +18,22 @@ export default {
       meta: {
         title: '满件优惠'
       }
+    },
+    {
+      path: '/marketing/fullOrder/detail',
+      name: 'fullOrderDetail',
+      component: () => import(/* webpackChunkName: "fullOrder" */ '@/views/marketing/fullOrder/detail'),
+      meta: {
+        title: '活动详情'
+      }
+    },
+    {
+      path: '/marketing/fullOrder/edit',
+      name: 'fullOrderEdit',
+      component: () => import(/* webpackChunkName: "fullOrder" */ '@/views/marketing/fullOrder/edit'),
+      meta: {
+        title: '活动编辑'
+      }
     }
-    // {
-    //   path: '/marketing/fullOrder/detail',
-    //   name: 'fullOrderDetail',
-    //   component: () => import(/* webpackChunkName: "fullOrder" */ '@/views/marketing/fullOrder/detail'),
-    //   meta: {
-    //     title: '专题详情'
-    //   }
-    // },
-    // {
-    //   path: '/marketing/fullOrder/edit',
-    //   name: 'fullOrderEdit',
-    //   component: () => import(/* webpackChunkName: "fullOrder" */ '@/views/marketing/fullOrder/edit'),
-    //   meta: {
-    //     title: '编辑专题'
-    //   }
-    // },
-    // {
-    //   path: '/marketing/goods/edit',
-    //   name: 'goodsEdit',
-    //   component: () => import(/* webpackChunkName: "goods" */ '@/views/marketing/goods/edit'),
-    //   meta: {
-    //     title: '编辑商品'
-    //   }
-    // }
   ]
 }

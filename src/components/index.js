@@ -28,6 +28,7 @@ import ArticleListContent from '@/components/ArticleListContent'
 // 业务组件
 import AdvancedForm from '@/components/Business/AdvancedForm'
 import CheckForm from '@/components/Business/CheckForm'
+import DetailInfo from '@/components/Business/DetailInfo'
 
 // 二次封装
 import UploadImage from '@/components/UploadImage'
@@ -71,5 +72,6 @@ export {
   AdvancedForm,
   QRCode,
   TimeWait,
-  kindeditor
+  kindeditor,
+  DetailInfo
 }
