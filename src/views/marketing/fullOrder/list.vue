@@ -7,7 +7,7 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="活动名称">
                 <a-input
-                  v-model="queryParam.user_text"
+                  v-model="queryParam.activity_name"
                   placeholder="名称"
                 ></a-input>
               </a-form-item>
@@ -15,7 +15,7 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="活动状态">
                 <a-select
-                  v-model="queryParam.coupon_status"
+                  v-model="queryParam.activity_status"
                   :options="couponStatus"
                   placeholder="请选择"
                 >
@@ -25,7 +25,7 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="商品">
                 <a-input
-                  v-model="queryParam.user_text"
+                  v-model="queryParam.sSearch"
                   placeholder="ID、名称"
                 ></a-input>
               </a-form-item>
@@ -33,7 +33,7 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="活动类型">
                 <a-select
-                  v-model="queryParam.coupon_scene"
+                  v-model="queryParam.activity_type"
                   :options="useTypes"
                   placeholder="请选择"
                 >
@@ -79,23 +79,43 @@
         :showPagination="true"
       >
         <span class="table-action" slot="action" slot-scope="text, record">
+          <!--<template>-->
+            <!--<router-link-->
+              <!--:to="`/store/couponDetail?id=${record.id}`"-->
+              <!--target="_blank"-->
+              <!--&gt;查看</router-link-->
+            <!--&gt;-->
+            <!--<a-->
+              <!--v-if="['2', '3'].includes(record.coupon_status)"-->
+              <!--@click="batchDelete([record.id])"-->
+              <!--&gt;删除</a-->
+            <!--&gt;-->
+            <!--<a-->
+              <!--v-if="record.coupon_status === '1'"-->
+              <!--@click="batchFinish([record.id])"-->
+              <!--&gt;结束</a-->
+            <!--&gt;-->
+          <!--</template>-->
+
           <template>
-            <router-link
-              :to="`/store/couponDetail?id=${record.id}`"
-              target="_blank"
-              >查看</router-link
+            <a @click="goDetail(record)">查看</a>
+            <a @click="goEdit(record)">编辑</a>
+            <a-popconfirm
+                    :icon="icon"
+                    placement="top"
+                    ok-text="确定"
+                    cancel-text="取消"
+                    @confirm="handleRemove(record)"
             >
-            <a
-              v-if="['2', '3'].includes(record.coupon_status)"
-              @click="batchDelete([record.id])"
-              >删除</a
-            >
-            <a
-              v-if="record.coupon_status === '1'"
-              @click="batchFinish([record.id])"
-              >结束</a
-            >
+              <template slot="title">
+                <p>
+                  你确定要删除这行内容吗？
+                </p>
+              </template>
+              <a>删除</a>
+            </a-popconfirm>
           </template>
+
         </span>
       </s-table>
     </a-card>
@@ -107,7 +127,7 @@
 import cloneDeep from 'lodash.clonedeep'
 import { STable, AdvancedForm } from '@/components'
 import {
-  getAllCategory,
+    getAllGoods,
   getProjectList,
   finishCoupon,
   deleteCoupon
@@ -122,76 +142,61 @@ export default {
   data () {
     return {
       couponStatus: [
-        {
-          label: '未发布',
-          value: '2'
-        },
-        {
-          label: '领取中',
-          value: '1'
-        },
-        {
-          label: '已结束',
-          value: '3'
-        }
+          { value: '1', label: '进行中' },
+          { value: '2', label: '已暂停' },
+          { value: '3', label: '已结束' }
       ],
       useTypes: [
-        {
-          label: 'APP使用',
-          value: '0'
-        },
-        {
-          label: '线下使用',
-          value: '1'
-        },
-        {
-          label: 'APP及线下',
-          value: '2'
-        }
+          { value: '1', label: '满件打折' },
+          { value: '2', label: '满件送礼' },
+          { value: '3', label: '满件送礼+打折' }
       ],
       // 查询参数
       queryParam: {},
       columns: [
         {
           title: '活动名称',
-          dataIndex: 'coupon_status_name'
+          dataIndex: 'activity_name'
         },
         {
           title: '活动状态',
-          dataIndex: 'shops_coupon_name'
-        },
+          dataIndex: 'activity_status_desc'
+        }, 
         {
-          title: '活动时间',
-          dataIndex: 'coupon_mode_name',
-          customRender: (text, row) => {
-            return (<div>
-              <div>{text}</div>
-              <div>{row.endTime}</div>
-            </div>)
-          }
+            title: '活动时间',
+            dataIndex: 'activity_stime',
+            customRender: (text, row) => {
+                const ele = (
+                    <div>
+                    {text ? <div>起 {text}</div> : ''}
+                {row.activity_etime ? <div>止 {row.activity_etime}</div> : ''}
+                </div>
+                )
+                return text || row.activity_etime ? ele : '--'
+            }
         },
         {
           title: '活动类型',
-          dataIndex: 'coupon_scene_name'
+          dataIndex: 'activity_type'
         },
         {
           title: '商品数',
-          dataIndex: 'denomination',
+          dataIndex: 'activity_goods_count',
           sorter: true
         },
         {
           title: '订单量',
-          dataIndex: 'threshold_price',
+          dataIndex: 'activity_order_count',
           sorter: true
         },
         {
           title: '销售量',
-          dataIndex: 'is_limit',
+          dataIndex: 'activity_order_price',
           sorter: true
         },
         {
           title: '创建时间',
-          dataIndex: 'ctime'
+          dataIndex: 'activity_ctime'
         },
         {
           title: '操作',
@@ -207,9 +212,9 @@ export default {
           descend: 'desc'
         }
         const params = cloneDeep(this.queryParam)
-        params.sort_field = parameter.sortField
-        params.sort_type = sortText[parameter.sortOrder]
-        return getAllCategory(Object.assign(parameter, params))
+        params.order_field = parameter.sortField
+        params.order_value = sortText[parameter.sortOrder]
+        return getAllGoods(Object.assign(parameter, params))
       },
       selectedRowKeys: [],
       selectedRows: []

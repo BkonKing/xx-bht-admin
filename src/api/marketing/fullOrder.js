@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
 export const goodsApi = {
-  getAllCategory: '/combination_json/getAllCategory',
-  getSpecInfo: '/combination_json/getSpecInfo',
-  getAllGoods: '/combination_json/getAllGoods',
+  getAllCategory: '/fullorder_json/getAllCategory',
+  getSpecInfo: '/fullorder_json/getSpecInfo',
+  getAllGoods: '/fullorder_json/getActivityList',
   getGoodSpec: '/stock/getGoodSpec',
-  getSeller: '/combination_json/getSeller',
+  getSeller: '/fullorder_json/getSeller',
   goods_edit: '/ajax_commodity/goods_edit',
-  edit_goods: '/combination_json/edit_goods'
+  edit_goods: '/fullorder_json/edit_goods'
 }
 
 // 获取商品分类
