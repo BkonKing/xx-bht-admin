@@ -6,6 +6,7 @@ import store from './store'
 import ProLayout, {
   PageHeaderWrapper
 } from 'xx-ant-design-vue-pro-layout'
+import PageHeaderView from '@/layouts/PageHeaderView'
 import themePluginConfig from '../config/themePluginConfig'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
@@ -33,6 +34,7 @@ Vue.config.productionTip = false
 Vue.component('pro-layout', ProLayout)
 Vue.component('page-container', PageHeaderWrapper)
 Vue.component('page-header-wrapper', PageHeaderWrapper)
+Vue.component('page-header-view', PageHeaderView)
 
 window.umi_plugin_ant_themeVar = themePluginConfig.theme
 

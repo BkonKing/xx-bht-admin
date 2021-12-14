@@ -380,8 +380,8 @@ export default {
             : ''
         }
         this.sellForm = {
-          discount_vip: discount_vip * 100,
-          buying_roles: 0,
+          discount_vip: +discount_vip * 100,
+          buying_roles,
           quota_num,
           quota_time
         }
