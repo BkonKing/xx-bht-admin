@@ -8,9 +8,9 @@
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-form-model-item required prop="title" label="活动名称">
+        <a-form-model-item required prop="activity_name" label="活动名称">
           <a-input
-            v-model="formData.title"
+            v-model="formData.activity_name"
             placeholder="请输入"
             :maxLength="25"
           ></a-input>
@@ -27,16 +27,19 @@
             达到设定时间将自动开始和结束
           </div>
         </a-form-model-item>
-        <a-form-model-item prop="introduction_content" label="活动描述">
+        <a-form-model-item prop="activity_desc" label="活动描述">
           <a-textarea
-            v-model="formData.introduction_content"
+            v-model="formData.activity_desc"
             placeholder="请输入"
             :auto-size="{ minRows: 3, maxRows: 5 }"
             :maxLength="500"
           />
         </a-form-model-item>
-        <a-form-model-item label="活动商品">
-          <a-radio-group v-model="formData.type" :options="goodsTypes" />
+        <a-form-model-item label="活动商品" prop="activity_goods_type">
+          <a-radio-group
+            v-model="formData.activity_goods_type"
+            :options="goodsTypes"
+          />
         </a-form-model-item>
         <a-form-model-item label="活动对象">
           <a-radio :defaultChecked="true">全部用户</a-radio>
@@ -46,7 +49,7 @@
         </a-form-model-item>
         <a-form-model-item label="活动规则" required>
           <a-row
-            v-for="(item, index) in formData.cancelList"
+            v-for="(item, index) in formData.activity_rules"
             :key="item.id"
             :gutter="20"
             type="flex"
@@ -54,42 +57,41 @@
           >
             <a-col flex="1"
               ><a-form-model-item
-                :prop="`cancelList.${index}.content`"
-                :rules="{ required: true, message: '请输入取消原因' }"
+                :prop="`activity_rules.${index}.number`"
+                :rules="{ required: true, message: '请填写' }"
               >
                 <a-input
-                  v-model="item.content"
-                  :maxLength="20"
-                  placeholder="取消原因"
-                  @change="setChange"
+                  v-model="item.number"
+                  v-number-input
+                  :maxLength="10"
+                  suffix="件"
                 ></a-input></a-form-model-item
             ></a-col>
             <a-col flex="1"
-              ><a-form-model-item>
+              ><a-form-model-item
+                :prop="`activity_rules.${index}.discount`"
+                :rules="[{ required: true, message: '请填写' }]"
+              >
                 <a-input
-                  v-model="item.list_order"
-                  :maxLength="20"
-                  v-number-input.int
-                  @blur="changeSort"
-                  @change="setChange"
-                  placeholder="排序"
+                  v-model="item.discount"
+                  v-number-input
+                  :maxLength="10"
+                  suffix="折"
                 ></a-input></a-form-model-item
             ></a-col>
             <a-col>
               <a-icon
                 class="close-btn"
                 type="minus-circle"
-                @click="delCancel(index)"
+                @click="delRule(index)"
               />
             </a-col>
           </a-row>
-          <div class="addBtn" @click="addCancel">+ <span>添加</span></div>
+          <div class="addBtn" @click="addRule">+ <span>添加</span></div>
         </a-form-model-item>
       </a-form-model>
     </a-card>
-    <special-goods v-if="isListType" ref="special-goods"></special-goods>
-    <special-images v-else ref="special-images"></special-images>
-    <a-card title="活动商品" style="margin-top: 24px">
+    <a-card v-if="isPartGoods" title="活动商品" style="margin-top: 24px">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -129,14 +131,28 @@
             ></advanced-form>
           </a-row>
         </a-form>
+        <div class="table-operator">
+          <a-button type="primary" @click="visible = true">
+            添加商品
+          </a-button>
+          <a-button @click="batchOperate">
+            批量移除
+          </a-button>
+        </div>
         <s-table
           ref="table"
           size="default"
           rowKey="id"
           :columns="columns"
           :data="loadData"
+          :alert="{ clear: true }"
+          :rowSelection="rowSelection"
+          :rowSelectionPaging="true"
           :showPagination="true"
         >
+          <template>
+            <a @click="batchDelete([record.id])"> 删除</a>
+          </template>
         </s-table>
       </div>
     </a-card>
@@ -149,6 +165,20 @@
         >提交</a-button
       >
     </footer-tool-bar>
+    <a-modal
+      title="选择商品"
+      width="800px"
+      :visible="visible"
+      :confirm-loading="confirmLoading"
+      @ok="handleAddOk"
+      @cancel="handleAddCancel"
+    >
+      <goods-table
+        v-if="visible"
+        ref="goods-table"
+        :disabledRowkeys="disabledRowkeys"
+      ></goods-table>
+    </a-modal>
   </page-header-view>
 </template>
 
@@ -157,8 +187,7 @@ import moment from 'moment'
 import clonedeep from 'lodash.clonedeep'
 import PageHeaderView from '@/layouts/PageHeaderView'
 import FooterToolBar from '@/components/FooterToolbar'
-import SpecialGoods from '@/views/commodity/special/components/SpecialGoods'
-import SpecialImages from '@/views/commodity/special/components/SpecialImages'
+import GoodsTable from './components/GoodsTable'
 import { STable, AdvancedForm, DetailInfo, TImage } from '@/components'
 import { addSpecial, getSpecialById } from '@/api/commodity/specail'
 
@@ -168,26 +197,29 @@ export default {
     PageHeaderView,
     FooterToolBar,
     STable,
-    SpecialGoods,
-    SpecialImages
+    AdvancedForm,
+    GoodsTable
   },
   data () {
     return {
+      visible: false,
+      confirmLoading: false,
       specialId: '',
       defaultTime: moment('00:00:00', 'HH:mm:ss'),
       loading: false,
       labelCol: { lg: { span: 7 }, sm: { span: 7 } },
       wrapperCol: { lg: { span: 10 }, sm: { span: 10 } },
       formData: {
-        title: '',
-        is_open: true,
+        activity_name: '',
         time: [],
-        type: '1', // 专题类型 1专题商品2 图片专题
-        arrange: 1 // 1一行一个 2一行两个
+        activity_desc: '',
+        activity_goods_type: '1',
+        is_open: true,
+        activity_rules: []
       },
       rules: {
-        title: [{ required: true, message: '请输入专题名称' }],
-        time: [{ required: true, message: '请输入专题名称' }]
+        activity_name: [{ required: true, message: '请输入活动名称' }],
+        time: [{ required: true, message: '请选择时间' }]
       },
       goodsTypes: [
         {
@@ -199,11 +231,10 @@ export default {
           label: '部分商品'
         }
       ],
-      introForm: {
-        introduction_title: '',
-        introduction_image: [],
-        introduction_content: ''
-      },
+      queryParam: {},
+      couponStatus: [],
+      selectedRowKeys: [],
+      selectedRows: [],
       columns: [
         {
           title: '商品编号',
@@ -215,10 +246,12 @@ export default {
         },
         {
           title: '图片',
-          dataIndex: 'c_status_name',
-          customRender: (text) => {
+          dataIndex: 'c_status_name1',
+          customRender: text => {
             const src = [text]
-            return <t-image images={src} class="goods-image group-image"></t-image>
+            return (
+              <t-image images={src} class="goods-image group-image"></t-image>
+            )
           }
         },
         {
@@ -302,6 +335,16 @@ export default {
           title: '销售额',
           dataIndex: 'sygq_time',
           sorter: true
+        },
+        {
+          title: '销售额',
+          dataIndex: 'sygq_time1',
+          sorter: true
+        },
+        {
+          title: '操作',
+          dataIndex: 'sygq_time2',
+          scopedSlots: { customRender: 'action' }
         }
       ],
       loadData: parameter => {
@@ -312,15 +355,19 @@ export default {
         const params = clonedeep(this.queryParam)
         params.sort_field = parameter.sortField
         params.sort_type = sortText[parameter.sortOrder]
-        return getAllCategory(
-          Object.assign(parameter, params)
-        )
+        return getSpecialById(Object.assign(parameter, params))
       }
     }
   },
   computed: {
-    isListType () {
-      return this.formData.type === '1'
+    isPartGoods () {
+      return +this.formData.activity_goods_type === 2
+    },
+    rowSelection () {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange
+      }
     }
   },
   created () {
@@ -342,29 +389,84 @@ export default {
           type: data.content_type,
           arrange: data.arrange
         }
-        // 商品专题简介
-        this.introForm = {
-          introduction_title: data.topic_title,
-          introduction_image: data.topic_url ? [data.topic_url] : [],
-          introduction_content: data.topic_content
-        }
         this.setGoodsList(data)
       })
     },
-    addCancel () {
-      this.formData.cancelList.push({
+    addRule () {
+      this.formData.activity_rules.push({
         id: Math.random() * 100000,
-        content: '',
-        list_order: ''
+        number: '',
+        discount: ''
       })
     },
-    delCancel (index) {
-      this.formData.cancelList.splice(index, 1)
+    delRule (index) {
+      this.formData.activity_rules.splice(index, 1)
+    },
+    // 批量操作
+    batchOperate () {
+      if (this.selectedRowKeys.length) {
+        this.batchDelete()
+      } else {
+        this.$message.warning('请选择后再进行操作')
+      }
+    },
+    confirm ({ title, content, fn }) {
+      this.$confirm({
+        title,
+        content,
+        icon: () => (
+          <a-icon
+            type="exclamation-circle"
+            style="color: #faad14"
+            theme="filled"
+          />
+        ),
+        cancelText: '取消',
+        okText: '确定',
+        onOk () {
+          fn()
+        },
+        onCancel () {}
+      })
+    },
+    // 删除操作
+    batchDelete (id = this.selectedRowKeys) {
+      const content =
+        id.length > 1
+          ? `，确定移除${id.length}个商品吗？`
+          : '确定移除该商品吗？'
+      this.confirm({
+        title: '移除商品',
+        content,
+        fn: () => {
+          this.deleteCoupon(this.selectedRowKeys.join(','))
+        }
+      })
+    },
+    deleteCoupon (id) {
+      deleteCoupon({
+        shops_coupon_id_text: id
+      }).then(({ success, message }) => {
+        if (success) {
+          const ids = id.split(',')
+          // 选中selectedRowKeys去除删除的key
+          this.selectedRowKeys = this.selectedRowKeys.filter(
+            obj => !ids.includes(obj)
+          )
+          this.selectedRows = this.selectedRows.filter(
+            obj => !ids.includes(obj)
+          )
+          this.$message.success('删除成功')
+          this.refreshTable()
+        } else {
+          this.$message.error(message)
+        }
+      })
     },
     // 商品列表回填
     setGoodsList (data) {
       this.$nextTick(() => {
-        if (this.isListType) {
+        if (this.isPartGoods) {
           data.combination.forEach(obj => {
             obj.combination_pic = obj.combination_pic
               ? [obj.combination_pic]
@@ -403,7 +505,7 @@ export default {
     },
     handleSubmit () {
       Promise.all([this.formValidate('BasicForm')]).then(() => {
-        if (this.isListType) {
+        if (this.isPartGoods) {
           this.addSpecial({
             ...this.form,
             ...this.introForm,
@@ -476,6 +578,21 @@ export default {
           this.$router.go(-1)
         }
       })
+    },
+    handleAddOk () {},
+    handleAddCancel () {
+      this.visible = false
+    },
+    refreshTable (bool = false) {
+      this.$refs.table.refresh(bool)
+    },
+    resetTable () {
+      this.queryParam = {}
+      this.refreshTable(true)
+    },
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     }
   }
 }
@@ -495,5 +612,19 @@ export default {
   width: 100%;
   height: 190px;
   margin-bottom: 0;
+}
+.addBtn {
+  width: calc(100% - 38px);
+  height: 32px;
+  border-radius: 4px;
+  border: 1px dashed #d9d9d9;
+  text-align: center;
+  line-height: 28px;
+  cursor: pointer;
+}
+.close-btn {
+  display: flex;
+  margin-top: 7px;
+  font-size: 18px;
 }
 </style>
