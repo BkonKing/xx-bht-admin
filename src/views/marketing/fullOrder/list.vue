@@ -245,7 +245,7 @@ export default {
         batchFinish (id = this.selectedRowKeys) {
             const content =
                 id.length > 1
-                    ? `，确定结束${id.length}个活动吗？`
+                    ? `确定结束${id.length}个活动吗？`
                     : '确定结束该活动吗？'
             this.confirm({
                 title: '结束活动',
@@ -259,7 +259,7 @@ export default {
         batchDelete (id = this.selectedRowKeys) {
             const content =
                 id.length > 1
-                    ? `，确定删除${id.length}个活动吗？`
+                    ? `确定删除${id.length}个活动吗？`
                     : '确定删除该活动吗？'
             this.confirm({
                 title: '删除活动',
