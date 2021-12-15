@@ -92,6 +92,7 @@
         rowKey="id"
         :columns="ruleColumns"
         :data-source="info.rule_list"
+        :pagination="false"
       >
       </a-table>
     </a-card>
@@ -211,9 +212,11 @@ export default {
         {
           title: '图片',
           dataIndex: 'thumb',
-          customRender: (text) => {
+          customRender: text => {
             const src = [text]
-            return <t-image images={src} class="goods-image group-image"></t-image>
+            return (
+              <t-image images={src} class="goods-image group-image"></t-image>
+            )
           }
         },
         {
@@ -459,12 +462,12 @@ export default {
 }
 
 .goods-image {
-  .image-box {
+  /deep/ .image-box {
     margin: 0;
-  }
-  img {
-    width: 45px;
-    height: 45px;
+    img {
+      width: 45px;
+      height: 45px;
+    }
   }
 }
 
