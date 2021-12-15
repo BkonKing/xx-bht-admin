@@ -154,6 +154,10 @@
                     }
                 },
                 {
+                    title: '启用状态',
+                    dataIndex: 'is_open_desc'
+                },
+                {
                     title: '优惠叠加',
                     dataIndex: 'superposition_desc'
                 },
@@ -163,7 +167,7 @@
                 },
                 {
                     title: '优惠计算',
-                    dataIndex: 'calculation'
+                    dataIndex: 'calculation_desc'
                 },
                 {
                     title: '设置备注',
