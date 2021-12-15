@@ -240,10 +240,8 @@ export default {
           customRender: (text, row) => {
             return (
               <div class="flex-center">
-                <span class="specification-span">{text} / </span>
-                <span>{row.s_price} | </span>
-                <span>{row.vip_price} | </span>
-                <span>{row.e_price}</span>
+                <span class="specification-span">{text} </span>
+                <span>￥{row.s_price} | ￥{row.vip_price} | ￥{row.e_price}</span>
               </div>
             )
           }
