@@ -79,42 +79,25 @@
         :showPagination="true"
       >
         <span class="table-action" slot="action" slot-scope="text, record">
-          <!--<template>-->
-            <!--<router-link-->
-              <!--:to="`/store/couponDetail?id=${record.id}`"-->
-              <!--target="_blank"-->
-              <!--&gt;查看</router-link-->
-            <!--&gt;-->
-            <!--<a-->
-              <!--v-if="['2', '3'].includes(record.coupon_status)"-->
-              <!--@click="batchDelete([record.id])"-->
-              <!--&gt;删除</a-->
-            <!--&gt;-->
-            <!--<a-->
-              <!--v-if="record.coupon_status === '1'"-->
-              <!--@click="batchFinish([record.id])"-->
-              <!--&gt;结束</a-->
-            <!--&gt;-->
-          <!--</template>-->
-
           <template>
-            <a @click="goDetail(record)">查看</a>
-            <a @click="goEdit(record)">编辑</a>
-            <a-popconfirm
-                    :icon="icon"
-                    placement="top"
-                    ok-text="确定"
-                    cancel-text="取消"
-                    @confirm="handleRemove(record)"
+            <a
+              :href="`/marketing/fullOrder/detail?id=${record.id}`"
+              target="_blank"
+              >查看</a
             >
-              <template slot="title">
-                <p>
-                  你确定要删除这行内容吗？
-                </p>
-              </template>
-              <a>删除</a>
-            </a-popconfirm>
+            <a
+                    :href="`/marketing/fullOrder/edit?id=${record.id}`"
+                    target="_blank"
+            >编辑</a
+            >
+            <a
+            v-if="['0', '2'].includes(record.activity_status)"
+                    @click="batchDelete([record.id])"
+            >删除</a
+
+            >
           </template>
+
 
         </span>
       </s-table>
@@ -127,10 +110,8 @@
 import cloneDeep from 'lodash.clonedeep'
 import { STable, AdvancedForm } from '@/components'
 import {
-    getAllGoods,
-  getProjectList,
-  finishCoupon,
-  deleteCoupon
+    getActivityList,
+    optActivity,
 } from '@/api/marketing/fullOrder'
 
 export default {
@@ -161,7 +142,7 @@ export default {
         {
           title: '活动状态',
           dataIndex: 'activity_status_desc'
-        }, 
+        },
         {
             title: '活动时间',
             dataIndex: 'activity_stime',
@@ -191,7 +172,7 @@ export default {
         },
         {
           title: '销售量',
-          dataIndex: 'activity_order_price',
+          dataIndex: 'activity_sale_count',
           sorter: true
         },
         {
@@ -214,7 +195,7 @@ export default {
         const params = cloneDeep(this.queryParam)
         params.order_field = parameter.sortField
         params.order_value = sortText[parameter.sortOrder]
-        return getAllGoods(Object.assign(parameter, params))
+        return getActivityList(Object.assign(parameter, params))
       },
       selectedRowKeys: [],
       selectedRows: []
@@ -277,7 +258,7 @@ export default {
       const content =
         id.length > 1 ? `，确定结束${id.length}个活动吗？` : '确定结束该活动吗？'
       this.confirm({
-        title: '结束店铺券',
+        title: '结束活动',
         content,
         fn: () => {
           this.finishCoupon(id.join(','))
@@ -285,8 +266,9 @@ export default {
       })
     },
     finishCoupon (id) {
-      finishCoupon({
-        shops_coupon_id_text: id
+        optActivity({
+            ids: id,
+            type: 2,
       }).then(({ success, message }) => {
         if (success) {
           const ids = id.split(',')
@@ -309,16 +291,17 @@ export default {
       const content =
         id.length > 1 ? `，确定删除${id.length}个活动吗？` : '确定删除该活动吗？'
       this.confirm({
-        title: '删除店铺券',
+        title: '删除活动',
         content,
         fn: () => {
-          this.deleteCoupon(this.selectedRowKeys.join(','))
+          this.deleteinfo(id.join(','))
         }
       })
     },
-    deleteCoupon (id) {
-      deleteCoupon({
-        shops_coupon_id_text: id
+      deleteinfo (id) {
+        optActivity({
+            ids: id,
+            type: 1,
       }).then(({ success, message }) => {
         if (success) {
           const ids = id.split(',')

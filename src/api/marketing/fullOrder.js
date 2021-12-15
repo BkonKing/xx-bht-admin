@@ -1,79 +1,54 @@
 import request from '@/utils/request'
 
 export const goodsApi = {
-  getAllCategory: '/fullorder_json/getAllCategory',
-  getSpecInfo: '/fullorder_json/getSpecInfo',
-  getAllGoods: '/fullorder_json/getActivityList',
-  getGoodSpec: '/stock/getGoodSpec',
-  getSeller: '/fullorder_json/getSeller',
-  goods_edit: '/ajax_commodity/goods_edit',
-  edit_goods: '/fullorder_json/edit_goods'
+    getActivityList: '/fullorder_json/getActivityList',
+    optActivity: '/fullorder_json/optActivity',
+    getSpecInfo: '/fullorder_json/getActivityInfo',
+    getActivityGoods: '/fullorder_json/getActivityGoods',
+    getGoodsCategory: '/fullorder_json/getGoodsCategory',
 }
 
-// 获取商品分类
-export function getAllCategory (data) {
-  return request({
-    url: goodsApi.getAllCategory,
-    method: 'post',
-    data
-  })
+
+// 获取满件活动列表
+export function getActivityList (data) {
+    return request({
+        url: goodsApi.getActivityList,
+        method: 'post',
+        data
+    })
 }
 
-// 获取仓库系统的商品
-export function getGoodSpec () {
-  const {
-    VUE_APP_PRODUCTION_HOST: productionHost,
-    VUE_APP_TEST_STORE: testStoreUrl,
-    VUE_APP_PRODUCTION_STORE: productionStoreUrl
-  } = process.env
-  return request({
-    url: goodsApi.getGoodSpec,
-    baseURL: location.host === productionHost ? productionStoreUrl : testStoreUrl,
-    method: 'get'
-  })
-}
 
-// 根据商品ID和规格ID获取规格信息
+// 获取满件活动列表
+export function optActivity (data) {
+    return request({
+        url: goodsApi.optActivity,
+        method: 'post',
+        data
+    })
+}
+// 获取活动详情
 export function getSpecInfo (data) {
-  return request({
-    url: goodsApi.getSpecInfo,
-    method: 'post',
-    data
-  })
+    return request({
+        url: goodsApi.getSpecInfo,
+        method: 'post',
+        data
+    })
+}
+// 根据活动id获取商品列表
+export function getActivityGoods (data) {
+    return request({
+        url: goodsApi.getActivityGoods,
+        method: 'post',
+        data
+    })
+}
+// 获取商品分类
+export function getGoodsCategory (data) {
+    return request({
+        url: goodsApi.getGoodsCategory,
+        method: 'post',
+        data
+    })
 }
 
-// 获取所有的商品名称（添加组合商品时使有用）
-export function getAllGoods (data) {
-  return request({
-    url: goodsApi.getAllGoods,
-    method: 'post',
-    data
-  })
-}
-
-// 获取所有的供应商
-export function getSeller (data) {
-  return request({
-    url: goodsApi.getSeller,
-    method: 'post',
-    data
-  })
-}
-
-// 添加修改（商品）
-export function editGoods (data) {
-  return request({
-    url: goodsApi.goods_edit,
-    method: 'post',
-    data
-  })
-}
-
-// 获取编辑商品的信息
-export function getEditGoods (data) {
-  return request({
-    url: goodsApi.edit_goods,
-    method: 'post',
-    data
-  })
-}
