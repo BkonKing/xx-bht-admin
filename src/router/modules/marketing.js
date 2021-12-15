@@ -12,6 +12,14 @@ export default {
   redirect: '/marketing/fullOrder/list', // 二级菜单需要重定向一个三级菜单地址
   children: [
     {
+      path: '/marketing/setting',
+      name: 'marketingSetting',
+      component: () => import(/* webpackChunkName: "marketing" */ '@/views/marketing/setting'),
+      meta: {
+        title: '营销设置'
+      }
+    },
+    {
       path: '/marketing/fullOrder/list',
       name: 'fullOrderList',
       component: () => import(/* webpackChunkName: "fullOrder" */ '@/views/marketing/fullOrder/list'),
