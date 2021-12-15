@@ -43,11 +43,10 @@
       <a-form-model
         ref="form"
         :model="formData"
-        :rules="rules"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-form-model-item required prop="time" label="启用时间">
+        <a-form-model-item v-if="+formData.is_default === 0" required prop="time" label="启用时间" :rules="{ required: true, message: '请选择时间' }">
           <a-range-picker
             v-model="formData.time"
             :show-time="{ defaultValue: [defaultTime, defaultTime] }"
@@ -222,10 +221,7 @@ export default {
         calculation: 0,
         remark: ''
       },
-      oldSuperposition: [],
-      rules: {
-        time: [{ required: true, message: '请选择时间' }]
-      }
+      oldSuperposition: []
     }
   },
   watch: {
