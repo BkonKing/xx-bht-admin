@@ -80,25 +80,14 @@
       >
         <span class="table-action" slot="action" slot-scope="text, record">
           <template>
+            <a :href="`/marketing/fullOrder/detail?id=${record.id}`">查看</a>
+            <a :href="`/marketing/fullOrder/edit?id=${record.id}`">编辑</a>
             <a
-              :href="`/marketing/fullOrder/detail?id=${record.id}`"
-              target="_blank"
-              >查看</a
-            >
-            <a
-                    :href="`/marketing/fullOrder/edit?id=${record.id}`"
-                    target="_blank"
-            >编辑</a
-            >
-            <a
-            v-if="['0', '2'].includes(record.activity_status)"
-                    @click="batchDelete([record.id])"
-            >删除</a
-
+              v-if="['0', '2'].includes(record.activity_status)"
+              @click="batchDelete([record.id])"
+              >删除</a
             >
           </template>
-
-
         </span>
       </s-table>
     </a-card>
@@ -109,10 +98,7 @@
 // /store/list
 import cloneDeep from 'lodash.clonedeep'
 import { STable, AdvancedForm } from '@/components'
-import {
-    getActivityList,
-    optActivity,
-} from '@/api/marketing/fullOrder'
+import { getActivityList, optActivity } from '@/api/marketing/fullOrder'
 
 export default {
   name: 'CouponList',
@@ -123,14 +109,14 @@ export default {
   data () {
     return {
       couponStatus: [
-          { value: '1', label: '进行中' },
-          { value: '2', label: '已暂停' },
-          { value: '3', label: '已结束' }
+        { value: '1', label: '进行中' },
+        { value: '2', label: '已暂停' },
+        { value: '3', label: '已结束' }
       ],
       useTypes: [
-          { value: '1', label: '满件打折' },
-          { value: '2', label: '满件送礼' },
-          { value: '3', label: '满件送礼+打折' }
+        { value: '1', label: '满件打折' },
+        { value: '2', label: '满件送礼' },
+        { value: '3', label: '满件送礼+打折' }
       ],
       // 查询参数
       queryParam: {},
@@ -144,17 +130,18 @@ export default {
           dataIndex: 'activity_status_desc'
         },
         {
-            title: '活动时间',
-            dataIndex: 'activity_stime',
-            customRender: (text, row) => {
-                const ele = (
-                    <div>
-                    {text ? <div>起 {text}</div> : ''}
-                {row.activity_etime ? <div>止 {row.activity_etime}</div> : ''}
-                </div>
-                )
-                return text || row.activity_etime ? ele : '--'
-            }
+          title: '活动时间',
+          dataIndex: 'activity_stime',
+          customRender: (text, row) => {
+            const eTime = row.activity_etime
+            const ele = (
+              <div>
+                {text ? <div>起 {text}</div> : ''}
+                {eTime ? <div>止 {eTime}</div> : ''}
+              </div>
+            )
+            return text || eTime ? ele : '--'
+          }
         },
         {
           title: '活动类型',
@@ -209,8 +196,7 @@ export default {
       }
     }
   },
-  created () {
-  },
+  created () {},
   methods: {
     refreshTable (bool = false) {
       this.$refs.table.refresh(bool)
@@ -220,7 +206,9 @@ export default {
       this.refreshTable(true)
     },
     addActivity () {
-
+      this.$router.push({
+        name: 'fullOrderEdit'
+      })
     },
     confirm ({ title, content, fn }) {
       this.$confirm({
@@ -256,52 +244,35 @@ export default {
     // 结束操作
     batchFinish (id = this.selectedRowKeys) {
       const content =
-        id.length > 1 ? `，确定结束${id.length}个活动吗？` : '确定结束该活动吗？'
+        id.length > 1
+          ? `，确定结束${id.length}个活动吗？`
+          : '确定结束该活动吗？'
       this.confirm({
         title: '结束活动',
         content,
         fn: () => {
-          this.finishCoupon(id.join(','))
-        }
-      })
-    },
-    finishCoupon (id) {
-        optActivity({
-            ids: id,
-            type: 2,
-      }).then(({ success, message }) => {
-        if (success) {
-          const ids = id.split(',')
-          // 选中selectedRowKeys去除删除的key
-          this.selectedRowKeys = this.selectedRowKeys.filter(
-            obj => !ids.includes(obj)
-          )
-          this.selectedRows = this.selectedRows.filter(
-            obj => !ids.includes(obj)
-          )
-          this.$message.success('提交成功')
-          this.refreshTable()
-        } else {
-          this.$message.error(message)
+          this.optActivity(id.join(','), 2)
         }
       })
     },
     // 删除操作
     batchDelete (id = this.selectedRowKeys) {
       const content =
-        id.length > 1 ? `，确定删除${id.length}个活动吗？` : '确定删除该活动吗？'
+        id.length > 1
+          ? `，确定删除${id.length}个活动吗？`
+          : '确定删除该活动吗？'
       this.confirm({
         title: '删除活动',
         content,
         fn: () => {
-          this.deleteinfo(id.join(','))
+          this.deleteInfo(id.join(','), 1)
         }
       })
     },
-      deleteinfo (id) {
-        optActivity({
-            ids: id,
-            type: 1,
+    optActivity (id, type) {
+      optActivity({
+        ids: id,
+        type
       }).then(({ success, message }) => {
         if (success) {
           const ids = id.split(',')
@@ -312,7 +283,7 @@ export default {
           this.selectedRows = this.selectedRows.filter(
             obj => !ids.includes(obj)
           )
-          this.$message.success('删除成功')
+          this.$message.success(type === 1 ? '删除成功' : '结束成功')
           this.refreshTable()
         } else {
           this.$message.error(message)
