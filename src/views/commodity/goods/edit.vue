@@ -339,9 +339,17 @@ export default {
       const endMomentValue = moment(endValue).valueOf()
       // 没有开始时间，则结束时间要大于等于今天
       if (!startValue) {
-        return moment().startOf('day').valueOf() > endMomentValue
+        return (
+          moment()
+            .startOf('day')
+            .valueOf() > endMomentValue
+        )
       }
-      return moment(startValue).startOf('day').valueOf() > endMomentValue
+      return (
+        moment(startValue)
+          .startOf('day')
+          .valueOf() > endMomentValue
+      )
     },
     // 获取编辑商品的信息
     getEditGoods () {
@@ -457,9 +465,9 @@ export default {
         obj.specs_img = obj.specs_img[0] || ''
         if (Array.isArray(obj.combination_spec)) {
           // 商品规格只保存规格id
-          obj.combination_spec = obj.combination_spec.map(
-            model => model.specs_id
-          ).filter(value => value)
+          obj.combination_spec = obj.combination_spec
+            .map(model => model.specs_id)
+            .filter(value => value)
         }
         return obj
       })

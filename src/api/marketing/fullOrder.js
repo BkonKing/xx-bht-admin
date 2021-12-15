@@ -3,8 +3,10 @@ import request from '@/utils/request'
 export const goodsApi = {
   getActivityList: '/fullorder_json/getActivityList',
   optActivity: '/fullorder_json/optActivity',
-  getSpecInfo: '/fullorder_json/getActivityInfo',
+  getActivityInfo: '/fullorder_json/getActivityInfo',
+  addActivity: '/fullorder_json/addActivity',
   getActivityGoods: '/fullorder_json/getActivityGoods',
+  getGoodsListByIds: '/fullorder_json/getGoodsListByIds',
   getGoodsCategory: '/fullorder_json/getGoodsCategory',
   getDiscountList: '/fullorder_json/getDiscountList',
   optSetting: '/fullorder_json/optSetting',
@@ -29,9 +31,17 @@ export function optActivity (data) {
   })
 }
 // 获取活动详情
-export function getSpecInfo (data) {
+export function getActivityInfo (data) {
   return request({
-    url: goodsApi.getSpecInfo,
+    url: goodsApi.getActivityInfo,
+    method: 'post',
+    data
+  })
+}
+// 添加修改活动
+export function saveActivity (data) {
+  return request({
+    url: goodsApi.addActivity,
     method: 'post',
     data
   })
@@ -40,6 +50,14 @@ export function getSpecInfo (data) {
 export function getActivityGoods (data) {
   return request({
     url: goodsApi.getActivityGoods,
+    method: 'post',
+    data
+  })
+}
+// 根据商品ID串获取商品列表
+export function getGoodsListByIds (data) {
+  return request({
+    url: goodsApi.getGoodsListByIds,
     method: 'post',
     data
   })

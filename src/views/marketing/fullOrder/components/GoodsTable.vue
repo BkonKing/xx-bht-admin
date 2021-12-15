@@ -132,12 +132,12 @@ export default {
     rowSelection () {
       return {
         selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange
-        // getCheckboxProps: record => ({
-        //   props: {
-        //     disabled: this.disabledRowkeys.includes(record.id)
-        //   }
-        // })
+        onChange: this.onSelectChange,
+        getCheckboxProps: record => ({
+          props: {
+            disabled: this.disabledRowkeys.includes(+record.id)
+          }
+        })
       }
     }
   },

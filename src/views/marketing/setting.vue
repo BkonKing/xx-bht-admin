@@ -46,7 +46,13 @@
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-form-model-item v-if="+formData.is_default === 0" required prop="time" label="启用时间" :rules="{ required: true, message: '请选择时间' }">
+        <a-form-model-item
+          v-if="+formData.is_default === 0"
+          required
+          prop="time"
+          label="启用时间"
+          :rules="{ required: true, message: '请选择时间' }"
+        >
           <a-range-picker
             v-model="formData.time"
             :show-time="{ defaultValue: [defaultTime, defaultTime] }"
@@ -272,7 +278,9 @@ export default {
     handleEdit ({ id }) {
       getDiscountDetail({ id }).then(({ info }) => {
         info.time = info.stime && info.etime ? [info.stime, info.etime] : []
-        info.superposition = info.superposition ? info.superposition.split(',') : []
+        info.superposition = info.superposition
+          ? info.superposition.split(',')
+          : []
         this.formData = info
         this.$nextTick(() => {
           this.oldSuperposition = this.formData.superposition
@@ -340,11 +348,13 @@ export default {
       }
       params.type = params.id ? 2 : 1
       params.superposition = params.superposition.join(',')
-      setDiscount(params).then(({ success }) => {
+      setDiscount(params).then(({ success, message }) => {
         if (success) {
           this.$message.success('提交成功')
           this.visible = false
           this.getDiscountList()
+        } else {
+          this.$message.error(message)
         }
       })
     },
