@@ -159,10 +159,10 @@
 import clonedeep from 'lodash.clonedeep'
 import { STable, AdvancedForm, DetailInfo, TImage } from '@/components'
 import {
-  getSpecInfo,
-  getActivityGoods,
-  getGoodsCategory,
-  optActivity
+    getSpecInfo,
+    getActivityGoods,
+    getGoodsCategory,
+    optActivity
 } from '@/api/marketing/fullOrder'
 
 export default {
@@ -226,7 +226,7 @@ export default {
             return (
               <a
                 class="two-Multi"
-                href={`/nsolid/commodity/goods?goods_id=${row.goods_id}`}
+                href={`/nsolid/commodity/goods?goods_id=${row.id}`}
                 target="_blank"
               >
                 {text}

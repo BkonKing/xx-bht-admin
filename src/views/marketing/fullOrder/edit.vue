@@ -37,7 +37,7 @@
         </a-form-model-item>
         <a-form-model-item label="活动商品" prop="activity_goods_type">
           <a-radio-group
-            v-model="formData.activity_goods_type"
+            v-model="formData.activity_type"
             :options="goodsTypes"
           />
         </a-form-model-item>
@@ -189,412 +189,412 @@ import PageHeaderView from '@/layouts/PageHeaderView'
 import FooterToolBar from '@/components/FooterToolbar'
 import GoodsTable from './components/GoodsTable'
 import { STable, AdvancedForm, DetailInfo, TImage } from '@/components'
-import { addSpecial, getSpecialById } from '@/api/commodity/specail'
+import { addSpecial, getSpecialById, getActivityGoods, getSpecInfo } from '@/api/marketing/fullOrder'
 
 export default {
-  name: 'SpecialEdit',
-  components: {
-    PageHeaderView,
-    FooterToolBar,
-    STable,
-    AdvancedForm,
-    GoodsTable
-  },
-  data () {
-    return {
-      visible: false,
-      confirmLoading: false,
-      specialId: '',
-      defaultTime: moment('00:00:00', 'HH:mm:ss'),
-      loading: false,
-      labelCol: { lg: { span: 7 }, sm: { span: 7 } },
-      wrapperCol: { lg: { span: 10 }, sm: { span: 10 } },
-      formData: {
-        activity_name: '',
-        time: [],
-        activity_desc: '',
-        activity_goods_type: '1',
-        is_open: true,
-        activity_rules: []
-      },
-      rules: {
-        activity_name: [{ required: true, message: '请输入活动名称' }],
-        time: [{ required: true, message: '请选择时间' }]
-      },
-      goodsTypes: [
-        {
-          value: '1',
-          label: '全部商品'
-        },
-        {
-          value: '2',
-          label: '部分商品'
-        }
-      ],
-      queryParam: {},
-      couponStatus: [],
-      selectedRowKeys: [],
-      selectedRows: [],
-      columns: [
-        {
-          title: '商品编号',
-          dataIndex: 'id'
-        },
-        {
-          title: '分类',
-          dataIndex: 'c_status_name'
-        },
-        {
-          title: '图片',
-          dataIndex: 'c_status_name1',
-          customRender: text => {
-            const src = [text]
-            return (
-              <t-image images={src} class="goods-image group-image"></t-image>
-            )
-          }
-        },
-        {
-          title: '商品名称',
-          dataIndex: 'nickname',
-          customRender: (text, row) => {
-            return (
-              <a
-                class="two-Multi"
-                href={`/zht/user/user/getUserList?uid=${row.uid}`}
-                target="_blank"
-              >
-                {text}
-              </a>
-            )
-          }
-        },
-        {
-          title: '规格 / 价格(现价|会员价|优享价)',
-          dataIndex: 'realname',
-          customRender: (text, row) => {
-            return (
-              <div>
-                <span class="specification-span">{text}</span>
-                <span>{row.mobile} | </span>
-                <span>{row.mobile} | </span>
-                <span>{row.mobile} | </span>
-              </div>
-            )
-          }
-        },
-        {
-          title: '库存(可拍)',
-          dataIndex: 'pay_money',
-          customRender: (text, row) => {
-            return (
-              <div>
-                <span>{text}</span>
-                <span>({row.mobile})</span>
-              </div>
-            )
-          }
-        },
-        {
-          title: '商品状态',
-          dataIndex: 'g_etime'
-        },
-        {
-          title: '订单量',
-          dataIndex: 'g_etime1',
-          sorter: true,
-          customRender: (text, row) => {
-            return (
-              <a
-                class="two-Multi"
-                href={`/zht/user/user/getUserList?uid=${row.uid}`}
-                target="_blank"
-              >
-                {text}
-              </a>
-            )
-          }
-        },
-        {
-          title: '销售量',
-          dataIndex: 'g_etime2',
-          sorter: true,
-          customRender: (text, row) => {
-            return (
-              <a
-                class="two-Multi"
-                href={`/zht/user/user/getUserList?uid=${row.uid}`}
-                target="_blank"
-              >
-                {text}
-              </a>
-            )
-          }
-        },
-        {
-          title: '销售额',
-          dataIndex: 'sygq_time',
-          sorter: true
-        },
-        {
-          title: '销售额',
-          dataIndex: 'sygq_time1',
-          sorter: true
-        },
-        {
-          title: '操作',
-          dataIndex: 'sygq_time2',
-          scopedSlots: { customRender: 'action' }
-        }
-      ],
-      loadData: parameter => {
-        const sortText = {
-          ascend: 'asc',
-          descend: 'desc'
-        }
-        const params = clonedeep(this.queryParam)
-        params.sort_field = parameter.sortField
-        params.sort_type = sortText[parameter.sortOrder]
-        return getSpecialById(Object.assign(parameter, params))
-      }
-    }
-  },
-  computed: {
-    isPartGoods () {
-      return +this.formData.activity_goods_type === 2
+    name: 'SpecialEdit',
+    components: {
+        PageHeaderView,
+        FooterToolBar,
+        STable,
+        AdvancedForm,
+        GoodsTable
     },
-    rowSelection () {
-      return {
-        selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange
-      }
-    }
-  },
-  created () {
-    this.specialId = this.$route.query.id
-  },
-  mounted () {
-    this.specialId && this.getSpecialById()
-  },
-  methods: {
-    // 编辑获取专题内容
-    getSpecialById () {
-      getSpecialById({
-        special_id: this.specialId
-      }).then(({ data }) => {
-        // 基础信息
-        this.formData = {
-          title: data.title,
-          is_open: data.is_open === 1,
-          type: data.content_type,
-          arrange: data.arrange
-        }
-        this.setGoodsList(data)
-      })
-    },
-    addRule () {
-      this.formData.activity_rules.push({
-        id: Math.random() * 100000,
-        number: '',
-        discount: ''
-      })
-    },
-    delRule (index) {
-      this.formData.activity_rules.splice(index, 1)
-    },
-    // 批量操作
-    batchOperate () {
-      if (this.selectedRowKeys.length) {
-        this.batchDelete()
-      } else {
-        this.$message.warning('请选择后再进行操作')
-      }
-    },
-    confirm ({ title, content, fn }) {
-      this.$confirm({
-        title,
-        content,
-        icon: () => (
-          <a-icon
-            type="exclamation-circle"
-            style="color: #faad14"
-            theme="filled"
-          />
-        ),
-        cancelText: '取消',
-        okText: '确定',
-        onOk () {
-          fn()
-        },
-        onCancel () {}
-      })
-    },
-    // 删除操作
-    batchDelete (id = this.selectedRowKeys) {
-      const content =
-        id.length > 1
-          ? `，确定移除${id.length}个商品吗？`
-          : '确定移除该商品吗？'
-      this.confirm({
-        title: '移除商品',
-        content,
-        fn: () => {
-          this.deleteCoupon(this.selectedRowKeys.join(','))
-        }
-      })
-    },
-    deleteCoupon (id) {
-      deleteCoupon({
-        shops_coupon_id_text: id
-      }).then(({ success, message }) => {
-        if (success) {
-          const ids = id.split(',')
-          // 选中selectedRowKeys去除删除的key
-          this.selectedRowKeys = this.selectedRowKeys.filter(
-            obj => !ids.includes(obj)
-          )
-          this.selectedRows = this.selectedRows.filter(
-            obj => !ids.includes(obj)
-          )
-          this.$message.success('删除成功')
-          this.refreshTable()
-        } else {
-          this.$message.error(message)
-        }
-      })
-    },
-    // 商品列表回填
-    setGoodsList (data) {
-      this.$nextTick(() => {
-        if (this.isPartGoods) {
-          data.combination.forEach(obj => {
-            obj.combination_pic = obj.combination_pic
-              ? [obj.combination_pic]
-              : []
-            obj.fold = true // 展开
-            obj.list.forEach(goods => {
-              goods.is_open = goods.is_open === '1'
-            })
-          })
-          this.$refs['special-goods'].tableData = data.combination
-        } else {
-          this.$refs['special-images'].tableData = data.list.map(obj => {
-            return {
-              list_order: obj.list_order,
-              list: obj.list.map(image => ({
-                id: image.jump_id,
-                type: image.jump_type,
-                pic_url: image.image_url ? [image.image_url] : []
-              }))
-            }
-          })
-        }
-      })
-    },
-    formValidate (form) {
-      return new Promise((resolve, reject) => {
-        this.$refs[form].validate(valid => {
-          if (valid) {
-            resolve()
-          } else {
-            reject(new Error(false))
-            return false
-          }
-        })
-      })
-    },
-    handleSubmit () {
-      Promise.all([this.formValidate('BasicForm')]).then(() => {
-        if (this.isPartGoods) {
-          this.addSpecial({
-            ...this.form,
-            ...this.introForm,
-            combination: this.formatGoodsData()
-          })
-        } else {
-          this.addSpecial({
-            ...this.form,
-            list: this.formatImageData()
-          })
-        }
-      })
-    },
-    // 专题商品列表数据格式化
-    formatGoodsData () {
-      return this.$refs['special-goods'].tableData
-        .filter(obj => {
-          return (
-            obj.combination_content || obj.combination_pic[0] || obj.list.length
-          )
-        })
-        .map(obj => {
-          return {
-            combination_content: obj.combination_content,
-            combination_pic: obj.combination_pic[0] || '',
-            combination_type: 1,
-            list_order: obj.list_order,
-            list: obj.list.map(goods => ({
-              goods_id: goods.goods_id,
-              is_open: goods.is_open ? 1 : 0,
-              list_order: goods.list_order
-            }))
-          }
-        })
-    },
-    // 图片专题数据格式化
-    formatImageData () {
-      return this.$refs['special-images'].tableData.map(obj => {
+    data () {
         return {
-          list_order: obj.list_order,
-          list: obj.list.map(image => ({
-            id: image.id,
-            type: image.type,
-            pic_url: image.pic_url[0]
-          }))
+            visible: false,
+            confirmLoading: false,
+            id: '',
+            defaultTime: moment('00:00:00', 'HH:mm:ss'),
+            loading: false,
+            labelCol: { lg: { span: 7 }, sm: { span: 7 } },
+            wrapperCol: { lg: { span: 10 }, sm: { span: 10 } },
+            formData: {
+                activity_name: "",
+                time: [],
+                activity_desc: '',
+                activity_goods_type: '1',
+                is_open: true,
+                activity_rules: []
+            },
+            rules: {
+                activity_name: [{ required: true, message: '请输入活动名称' }],
+                time: [{ required: true, message: '请选择时间' }]
+            },
+            goodsTypes: [
+                {
+                    value: '1',
+                    label: '全部商品'
+                },
+                {
+                    value: '2',
+                    label: '部分商品'
+                }
+            ],
+            queryParam: {},
+            couponStatus: [],
+            selectedRowKeys: [],
+            selectedRows: [],
+            columns: [
+                {
+                    title: '商品编号',
+                    dataIndex: 'id'
+                },
+                {
+                    title: '分类',
+                    dataIndex: 'category_name'
+                },
+                {
+                    title: '图片',
+                    dataIndex: 'thumb',
+                    customRender: text => {
+                        const src = [text]
+                        return (
+                            <t-image images={src} class="goods-image group-image"></t-image>
+                        )
+                    }
+                },
+                {
+                    title: '商品名称',
+                    dataIndex: 'goods_name',
+                    customRender: (text, row) => {
+                        return (
+                            <a
+                            class="two-Multi"
+                            href={`/nsolid/commodity/goods?goods_id=${row.id}`}
+                            target="_blank"
+                            >
+                            {text}
+                            </a>
+                        )
+                    }
+                },
+                {
+                    title: '规格 / 价格(现价|会员价|优享价)',
+                    dataIndex: 'specs_name',
+                    customRender: (text, row) => {
+                        return (
+                            <div>
+                            <span class="specification-span">{text}</span>
+                            <span>￥{row.s_price} | ￥{row.vip_price} | ￥{row.e_price}</span>
+                            </div>
+                        )
+                    }
+                },
+                {
+                    title: '库存(可拍)',
+                    dataIndex: 'stock',
+                    customRender: (text, row) => {
+                        return (
+                            <div>
+                            <span>{text}</span>
+                            <span>({row.available_stock})</span>
+                            </div>
+                        )
+                    }
+                },
+                {
+                    title: '商品状态',
+                    dataIndex: 'is_open_name'
+                },
+                // {
+                //     title: '订单量',
+                //     dataIndex: 'order_count',
+                //     sorter: true,
+                //     customRender: (text, row) => {
+                //         return (
+                //             <a
+                //     class="two-Multi"
+                //         href={`/zht/user/user/getUserList?uid=${row.uid}`}
+                //         target="_blank"
+                //             >
+                //             {text}
+                //             </a>
+                //     )
+                //     }
+                // },
+                // {
+                //     title: '销售量',
+                //     dataIndex: 'sale_count',
+                //     sorter: true,
+                //     customRender: (text, row) => {
+                //         return (
+                //             <a
+                //     class="two-Multi"
+                //         href={`/zht/user/user/getUserList?uid=${row.uid}`}
+                //         target="_blank"
+                //             >
+                //             {text}
+                //             </a>
+                //     )
+                //     }
+                // },
+                // {
+                //     title: '销售额',
+                //     dataIndex: 'activity_order_price',
+                //     sorter: true
+                // },
+                // {
+                //   title: '销售额',
+                //   dataIndex: 'sygq_time1',
+                //   sorter: true
+                // },
+                {
+                    title: '操作',
+                    dataIndex: 'sygq_time2',
+                    scopedSlots: { customRender: 'action' }
+                }
+            ],
+            loadData: parameter => {
+                const sortText = {
+                    ascend: 'asc',
+                    descend: 'desc'
+                }
+                const params = clonedeep(this.queryParam)
+                params.sort_field = parameter.sortField
+                params.sort_type = sortText[parameter.sortOrder]
+                params.activity_id = this.id
+                return getActivityGoods(Object.assign(parameter, params))
+            }
         }
-      })
     },
-    // 新增/修改专题
-    addSpecial (params) {
-      const { time } = params
-      if (time && time.length) {
-        params.stime = time[0]
-        params.etime = time[1]
-      }
-      if (params.introduction_image) {
-        params.introduction_image = params.introduction_image[0] || ''
-      }
-      if (params.wx_sharepic) {
-        params.wx_sharepic = params.wx_sharepic[0] || ''
-      }
-      // 是否开启 1开启 2关闭
-      params.is_open = params.is_open ? 1 : 2
-      // 操作类型 1添加 2修改
-      params.opt_type = this.specialId ? 2 : 1
-      this.specialId && (params.special_id = this.specialId)
-      addSpecial(params).then(({ success }) => {
-        if (success) {
-          this.$message.success('提交成功')
-          this.$router.go(-1)
+    computed: {
+        isPartGoods () {
+            return +this.formData.activity_goods_type === 2
+        },
+        rowSelection () {
+            return {
+                selectedRowKeys: this.selectedRowKeys,
+                onChange: this.onSelectChange
+            }
         }
-      })
     },
-    handleAddOk () {},
-    handleAddCancel () {
-      this.visible = false
+    created () {
+        this.id = this.$route.query.id
     },
-    refreshTable (bool = false) {
-      this.$refs.table.refresh(bool)
+    mounted () {
+        this.id && this.getSpecInfo()
     },
-    resetTable () {
-      this.queryParam = {}
-      this.refreshTable(true)
-    },
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    methods: {
+        // 编辑获取专题内容
+        getSpecInfo () {
+            getSpecInfo({
+                id: this.id
+            }).then(({ info }) => {
+                // 基础信息
+                this.formData = {
+                    activity_name: info.activity_name,
+                    time: info.activity_time_desc,
+                    is_open: info.is_open === 1,
+                    activity_desc: info.activity_desc,
+                    activity_goods_type: info.activity_goods_type
+                }
+                this.setGoodsList(info)
+            })
+        },
+        addRule () {
+            this.formData.activity_rules.push({
+                id: Math.random() * 100000,
+                number: '',
+                discount: ''
+            })
+        },
+        delRule (index) {
+            this.formData.activity_rules.splice(index, 1)
+        },
+        // 批量操作
+        batchOperate () {
+            if (this.selectedRowKeys.length) {
+                this.batchDelete()
+            } else {
+                this.$message.warning('请选择后再进行操作')
+            }
+        },
+        confirm ({ title, content, fn }) {
+            this.$confirm({
+                title,
+                content,
+                icon: () => (
+                    <a-icon
+                    type="exclamation-circle"
+                    style="color: #faad14"
+                    theme="filled"
+                    />
+                ),
+                cancelText: '取消',
+                okText: '确定',
+                onOk () {
+                fn()
+                },
+                onCancel () {}
+            })
+        },
+        // 删除操作
+        batchDelete (id = this.selectedRowKeys) {
+            const content =
+                id.length > 1
+                    ? `，确定移除${id.length}个商品吗？`
+                    : '确定移除该商品吗？'
+            this.confirm({
+                title: '移除商品',
+                content,
+                fn: () => {
+                    this.deleteCoupon(this.selectedRowKeys.join(','))
+                }
+            })
+        },
+        deleteCoupon (id) {
+            deleteCoupon({
+                shops_coupon_id_text: id
+            }).then(({ success, message }) => {
+                if (success) {
+                    const ids = id.split(',')
+                    // 选中selectedRowKeys去除删除的key
+                    this.selectedRowKeys = this.selectedRowKeys.filter(
+                        obj => !ids.includes(obj)
+                    )
+                    this.selectedRows = this.selectedRows.filter(
+                        obj => !ids.includes(obj)
+                    )
+                    this.$message.success('删除成功')
+                    this.refreshTable()
+                } else {
+                    this.$message.error(message)
+                }
+            })
+        },
+        // 商品列表回填
+        setGoodsList (data) {
+            this.$nextTick(() => {
+                if (this.isPartGoods) {
+                    data.combination.forEach(obj => {
+                        obj.combination_pic = obj.combination_pic
+                            ? [obj.combination_pic]
+                            : []
+                        obj.fold = true // 展开
+                        obj.list.forEach(goods => {
+                            goods.is_open = goods.is_open === '1'
+                        })
+                    })
+                    this.$refs['special-goods'].tableData = data.combination
+                } else {
+                    this.$refs['special-images'].tableData = data.list.map(obj => {
+                        return {
+                            list_order: obj.list_order,
+                            list: obj.list.map(image => ({
+                                id: image.jump_id,
+                                type: image.jump_type,
+                                pic_url: image.image_url ? [image.image_url] : []
+                            }))
+                        }
+                    })
+                }
+            })
+        },
+        formValidate (form) {
+            return new Promise((resolve, reject) => {
+                this.$refs[form].validate(valid => {
+                    if (valid) {
+                        resolve()
+                    } else {
+                        reject(new Error(false))
+                        return false
+                    }
+                })
+            })
+        },
+        handleSubmit () {
+            Promise.all([this.formValidate('BasicForm')]).then(() => {
+                if (this.isPartGoods) {
+                    this.addSpecial({
+                        ...this.form,
+                        ...this.introForm,
+                        combination: this.formatGoodsData()
+                    })
+                } else {
+                    this.addSpecial({
+                        ...this.form,
+                        list: this.formatImageData()
+                    })
+                }
+            })
+        },
+        // 专题商品列表数据格式化
+        formatGoodsData () {
+            return this.$refs['special-goods'].tableData
+                .filter(obj => {
+                    return (
+                        obj.combination_content || obj.combination_pic[0] || obj.list.length
+                    )
+                })
+                .map(obj => {
+                    return {
+                        combination_content: obj.combination_content,
+                        combination_pic: obj.combination_pic[0] || '',
+                        combination_type: 1,
+                        list_order: obj.list_order,
+                        list: obj.list.map(goods => ({
+                            goods_id: goods.goods_id,
+                            is_open: goods.is_open ? 1 : 0,
+                            list_order: goods.list_order
+                        }))
+                    }
+                })
+        },
+        // 图片专题数据格式化
+        formatImageData () {
+            return this.$refs['special-images'].tableData.map(obj => {
+                return {
+                    list_order: obj.list_order,
+                    list: obj.list.map(image => ({
+                        id: image.id,
+                        type: image.type,
+                        pic_url: image.pic_url[0]
+                    }))
+                }
+            })
+        },
+        // 新增/修改专题
+        addSpecial (params) {
+            const { time } = params
+            if (time && time.length) {
+                params.stime = time[0]
+                params.etime = time[1]
+            }
+            if (params.introduction_image) {
+                params.introduction_image = params.introduction_image[0] || ''
+            }
+            if (params.wx_sharepic) {
+                params.wx_sharepic = params.wx_sharepic[0] || ''
+            }
+            // 是否开启 1开启 2关闭
+            params.is_open = params.is_open ? 1 : 2
+            // 操作类型 1添加 2修改
+            params.opt_type = this.id ? 2 : 1
+            this.id && (params.special_id = this.id)
+            addSpecial(params).then(({ success }) => {
+                if (success) {
+                    this.$message.success('提交成功')
+                    this.$router.go(-1)
+                }
+            })
+        },
+        handleAddOk () {},
+        handleAddCancel () {
+            this.visible = false
+        },
+        refreshTable (bool = false) {
+            this.$refs.table.refresh(bool)
+        },
+        resetTable () {
+            this.queryParam = {}
+            this.refreshTable(true)
+        },
+        onSelectChange (selectedRowKeys, selectedRows) {
+            this.selectedRowKeys = selectedRowKeys
+            this.selectedRows = selectedRows
+        }
     }
-  }
 }
 </script>
 
