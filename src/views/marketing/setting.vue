@@ -211,6 +211,7 @@ export default {
         }
       ],
       formData: {
+        is_default: 0,
         time: [],
         superposition: ['1', '2', '3'],
         superposition_content: [
@@ -251,12 +252,27 @@ export default {
       })
     },
     addSetting () {
+      this.formData = {
+        is_default: 0,
+        time: [],
+        superposition: ['1', '2', '3'],
+        superposition_content: [
+          { superposition_id: '1', list_order: '' },
+          { superposition_id: '2', list_order: '' },
+          { superposition_id: '3', list_order: '' }
+        ],
+        calculation: 0,
+        remark: ''
+      }
+      this.$nextTick(() => {
+        this.oldSuperposition = this.formData.superposition
+      })
       this.visible = true
     },
     handleEdit ({ id }) {
       getDiscountDetail({ id }).then(({ info }) => {
         info.time = info.stime && info.etime ? [info.stime, info.etime] : []
-        info.superposition = info.superposition.split(',')
+        info.superposition = info.superposition ? info.superposition.split(',') : []
         this.formData = info
         this.$nextTick(() => {
           this.oldSuperposition = this.formData.superposition
@@ -266,8 +282,8 @@ export default {
     },
     setSuperpositionContent () {
       this.$nextTick(() => {
-        const newValue = this.formData.superposition
-        const oldValue = this.oldSuperposition
+        const newValue = this.formData.superposition || []
+        const oldValue = this.oldSuperposition || []
         if (newValue.length > oldValue.length) {
           const active = newValue.find(obj => !oldValue.includes(obj))
           if (active) {
