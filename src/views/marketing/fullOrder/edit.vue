@@ -288,8 +288,17 @@ export default {
         },
         {
           title: '规格 / 价格(现价|会员价|优享价)',
-          dataIndex: 'sell_text',
-          scopedSlots: { customRender: 'specs' }
+          dataIndex: 'specs_name',
+            customRender: (text, row) => {
+                return (
+                    <div class="flex-center">
+                    <span class="specification-span">{text} </span>
+                    <span>
+                    ￥{row.s_price} | ￥{row.vip_price} | ￥{row.e_price}
+            </span>
+                </div>
+            )
+            }
         },
         {
           title: '库存(可拍)',
