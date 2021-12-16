@@ -145,7 +145,7 @@ export default {
         },
         {
           title: '活动类型',
-          dataIndex: 'activity_type'
+          dataIndex: 'activity_type_desc'
         },
         {
           title: '商品数',
