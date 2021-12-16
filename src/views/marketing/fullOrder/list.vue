@@ -79,15 +79,30 @@
         :showPagination="true"
       >
         <span class="table-action" slot="action" slot-scope="text, record">
-          <template>
-            <a :href="`/marketing/fullOrder/detail?id=${record.id}`">查看</a>
-            <a :href="`/marketing/fullOrder/edit?id=${record.id}`">编辑</a>
-            <a
-              v-if="['0', '2'].includes(record.activity_status)"
-              @click="batchDelete([record.id])"
-              >删除</a
-            >
-          </template>
+          <router-link
+            :to="{
+              path: '/marketing/fullOrder/detail',
+              query: { id: record.id }
+            }"
+            >查看</router-link
+          >
+          <router-link
+            :to="{
+              path: '/marketing/fullOrder/edit',
+              query: { id: record.id }
+            }"
+            >编辑</router-link
+          >
+          <a
+            v-if="record.activity_status === '1'"
+            @click="batchFinish([record.id])"
+            >结束</a
+          >
+          <a
+            v-if="['0', '2'].includes(record.activity_status)"
+            @click="batchDelete([record.id])"
+            >删除</a
+          >
         </span>
       </s-table>
     </a-card>
@@ -261,7 +276,7 @@ export default {
         title: '删除活动',
         content,
         fn: () => {
-          this.deleteInfo(id.join(','), 1)
+          this.optActivity(id.join(','), 1)
         }
       })
     },
@@ -269,7 +284,7 @@ export default {
       optActivity({
         ids: id,
         type
-      }).then(({ success, message }) => {
+      }).then(({ success }) => {
         if (success) {
           const ids = id.split(',')
           // 选中selectedRowKeys去除删除的key
@@ -281,8 +296,6 @@ export default {
           )
           this.$message.success(type === 1 ? '删除成功' : '结束成功')
           this.refreshTable()
-        } else {
-          this.$message.error(message)
         }
       })
     },

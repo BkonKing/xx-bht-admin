@@ -156,7 +156,7 @@
           <template v-slot:specs="text">
             <div v-html="text"></div>
           </template>
-          <template slot="action" slot-scope="text,record">
+          <template slot="action" slot-scope="text, record">
             <a @click="batchDelete([record.goods_id])"> 删除</a>
           </template>
         </a-table>
@@ -288,17 +288,8 @@ export default {
         },
         {
           title: '规格 / 价格(现价|会员价|优享价)',
-          dataIndex: 'specs_name',
-            customRender: (text, row) => {
-                return (
-                    <div class="flex-center">
-                    <span class="specification-span">{text} </span>
-                    <span>
-                    ￥{row.s_price} | ￥{row.vip_price} | ￥{row.e_price}
-            </span>
-                </div>
-            )
-            }
+          dataIndex: 'sell_text',
+          scopedSlots: { customRender: 'specs' }
         },
         {
           title: '库存(可拍)',
@@ -487,9 +478,7 @@ export default {
       saveActivity(params).then(({ success, message }) => {
         if (success) {
           this.$message.success('提交成功')
-          // this.$router.go(-1)
-        } else {
-          this.$message.error(message)
+          this.$router.go(-1)
         }
       })
     },
@@ -570,5 +559,17 @@ export default {
   display: flex;
   margin-top: 7px;
   font-size: 18px;
+}
+.goods-image {
+  /deep/ .image-box {
+    margin: 0;
+    img {
+      width: 45px;
+      height: 45px;
+    }
+  }
+}
+/deep/ .one {
+  margin-right: 10px;
 }
 </style>

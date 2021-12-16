@@ -348,13 +348,11 @@ export default {
       }
       params.type = params.id ? 2 : 1
       params.superposition = params.superposition.join(',')
-      setDiscount(params).then(({ success, message }) => {
+      setDiscount(params).then(({ success }) => {
         if (success) {
           this.$message.success('提交成功')
           this.visible = false
           this.getDiscountList()
-        } else {
-          this.$message.error(message)
         }
       })
     },

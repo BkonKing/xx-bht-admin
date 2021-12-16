@@ -148,6 +148,9 @@
           :data="loadData"
           :showPagination="true"
         >
+          <template v-slot:specs="text">
+            <div v-html="text"></div>
+          </template>
         </s-table>
       </div>
     </a-card>
@@ -236,17 +239,8 @@ export default {
         },
         {
           title: '规格 / 价格(现价|会员价|优享价)',
-          dataIndex: 'specs_name',
-          customRender: (text, row) => {
-            return (
-              <div class="flex-center">
-                <span class="specification-span">{text} </span>
-                <span>
-                  ￥{row.s_price} | ￥{row.vip_price} | ￥{row.e_price}
-                </span>
-              </div>
-            )
-          }
+          dataIndex: 'sell_text',
+          scopedSlots: { customRender: 'specs' }
         },
         {
           title: '库存(可拍)',
@@ -481,5 +475,8 @@ export default {
 .flex-center {
   display: flex;
   align-items: center;
+}
+/deep/ .one {
+  margin-right: 10px;
 }
 </style>

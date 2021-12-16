@@ -23,8 +23,9 @@ Router.prototype.push = function push (location, onComplete, onAbort) {
     }
     const href = url.split('?')[0]
     if (pageMaps[href]) {
-      const hash = encodeURIComponent(`/new_version/index.html${url}`)
-      const newHref = `/nsolid${pageMaps[href]}?url=${hash}`
+      const ht = +Cookies.get('project_id') ? 'xmht' : 'zht'
+      const hash = encodeURIComponent(`/film/index.html${url}`)
+      const newHref = `/${ht}${pageMaps[href]}?url=${hash}`
       // 如果重新跳转的地址跟顶层地址一样就刷新顶层页面
       if ((top.location.origin + newHref) === top.location.href) {
         top.location.reload()
@@ -34,11 +35,11 @@ Router.prototype.push = function push (location, onComplete, onAbort) {
       return
     } else {
       // 调用原来的push函数，并捕获异常
-      return routerPush.call(this, location, onComplete, onAbort).catch(error => error)
+      return routerPush.call(this, location, onComplete, onAbort)
     }
   }
   // 调用原来的push函数，并捕获异常
-  return routerPush.call(this, location, onComplete, onAbort).catch(error => error)
+  return routerPush.call(this, location, onComplete, onAbort)
 }
 
 Vue.use(Router)
