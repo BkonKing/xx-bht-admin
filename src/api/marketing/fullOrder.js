@@ -6,6 +6,7 @@ export const goodsApi = {
   getActivityInfo: '/fullorder_json/getActivityInfo',
   addActivity: '/fullorder_json/addActivity',
   getActivityGoods: '/fullorder_json/getActivityGoods',
+  getGoodsList: '/fullorder_json/getGoodsList',
   getGoodsListByIds: '/fullorder_json/getGoodsListByIds',
   getGoodsCategory: '/fullorder_json/getGoodsCategory',
   getDiscountList: '/fullorder_json/getDiscountList',
@@ -50,6 +51,14 @@ export function saveActivity (data) {
 export function getActivityGoods (data) {
   return request({
     url: goodsApi.getActivityGoods,
+    method: 'post',
+    data
+  })
+}
+// 获取所有商品
+export function getGoodsList (data) {
+  return request({
+    url: goodsApi.getGoodsList,
     method: 'post',
     data
   })

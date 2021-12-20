@@ -18,7 +18,7 @@
         <a-form-model-item required prop="time" label="活动时间">
           <a-range-picker
             v-model="formData.time"
-            :show-time="{ defaultValue: [defaultTime, defaultTime] }"
+            :show-time="{ defaultValue: [defaultTime, defaultEndTime] }"
             :placeholder="['开始时间', '结束时间']"
             valueFormat="YYYY-MM-DD HH:mm:ss"
             style="width: 100%;"
@@ -145,7 +145,7 @@
         <a-table
           ref="table"
           size="default"
-          rowKey="id"
+          rowKey="goods_id"
           :columns="columns"
           :data-source="filterTableData"
           :alert="{ clear: true }"
@@ -174,6 +174,7 @@
     <a-modal
       title="选择商品"
       width="800px"
+      class="full-order-modal"
       :visible="visible"
       :confirm-loading="confirmLoading"
       @ok="handleAddOk"
@@ -219,6 +220,7 @@ export default {
       confirmLoading: false,
       id: '',
       defaultTime: moment('00:00:00', 'HH:mm:ss'),
+      defaultEndTime: moment('23:59:59', 'HH:mm:ss'),
       loading: false,
       labelCol: { lg: { span: 7 }, sm: { span: 7 } },
       wrapperCol: { lg: { span: 10 }, sm: { span: 10 } },
@@ -388,7 +390,7 @@ export default {
     // 批量操作
     batchOperate () {
       if (this.selectedRowKeys.length) {
-        this.batchDelete()
+        this.batchDelete(this.selectedRowKeys, true)
       } else {
         this.$message.warning('请选择后再进行操作')
       }
@@ -413,7 +415,7 @@ export default {
       })
     },
     // 删除操作
-    batchDelete (id = this.selectedRowKeys) {
+    batchDelete (id, isBatch = false) {
       const content =
         id.length > 1
           ? `，确定移除${id.length}个商品吗？`
@@ -422,14 +424,18 @@ export default {
         title: '移除商品',
         content,
         fn: () => {
-          this.deleteGoods(id)
+          this.deleteGoods(id, isBatch)
         }
       })
     },
-    deleteGoods (ids) {
+    deleteGoods (ids, isBatch) {
       ids.forEach(id => {
         const index = this.allTableData.findIndex(obj => obj.goods_id === id)
         this.allTableData.splice(index, 1)
+        if (isBatch) {
+          this.selectedRowKeys = []
+          this.selectedRows = []
+        }
         this.refreshTable()
       })
     },
@@ -486,17 +492,20 @@ export default {
       const ids = this.$refs['goods-table'].selectedRowKeys
       if (ids && ids.length) {
         const goodsIds = cloneDeep(ids)
-        const newIds = goodsIds.filter(id => {
-          return this.allTableData.findIndex(obj => +obj.id === +id) === -1
-        })
-        this.getGoodsListByIds(newIds)
+        // const newIds = goodsIds.filter(id => {
+        //   return this.allTableData.findIndex(obj => +obj.id === +id) === -1
+        // })
+        goodsIds && this.getGoodsListByIds(goodsIds)
+      } else {
+        this.visible = false
       }
     },
     async getGoodsListByIds (ids) {
       const { data } = await getGoodsListByIds({
         goods_ids: ids.join(',')
       })
-      this.allTableData.unshift(...data.records)
+      this.allTableData = data.records
+      // this.allTableData.unshift(...data.records)
       this.visible = false
       this.resetTable()
     },
@@ -571,5 +580,11 @@ export default {
 }
 /deep/ .one {
   margin-right: 10px;
+}
+</style>
+
+<style lang="less">
+.full-order-modal .ant-modal-body{
+  max-height: 700px;
 }
 </style>

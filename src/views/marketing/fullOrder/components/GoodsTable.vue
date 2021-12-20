@@ -10,7 +10,7 @@
           :key="item.id"
           closable
           class="goods-tag"
-          @close="removeSelected(index)"
+          @close="removeSelected(item)"
         >
           {{ item.goods_name }}
         </a-tag>
@@ -69,6 +69,7 @@
       :dataSource="tableData"
       :rowSelection="rowSelection"
       :rowSelectionPaging="true"
+      :scroll="{ y: 300 }"
       :pagination="false"
     >
     </a-table>
@@ -76,15 +77,18 @@
 </template>
 
 <script>
-// import { STable } from '@/components'
+import { /* STable */ TImage } from '@/components'
 import clonedeep from 'lodash.clonedeep'
-import { getCategory, getGoods } from '@/api/commodity/specail'
+import { getCategory } from '@/api/commodity/specail'
+import { getGoodsList } from '@/api/marketing/fullOrder'
 
 export default {
   name: 'goodsTable',
-  // components: {
-  //   STable
-  // },
+  components: {
+    // STable
+    // eslint-disable-next-line vue/no-unused-components
+    TImage
+  },
   props: {
     disabledRowkeys: {
       type: Array,
@@ -100,17 +104,23 @@ export default {
       columns: [
         {
           title: '商品编号',
-          dataIndex: 'id'
+          dataIndex: 'id',
+          width: 80
         },
         {
           title: '分类',
-          dataIndex: 'category_name'
+          dataIndex: 'category_name',
+          width: 150
         },
         {
           title: '图片',
           dataIndex: 'thumb',
+          width: 100,
           customRender: text => {
-            return <img class="" src="{text}" />
+            const src = [text]
+            return (
+              <t-image images={src} class="goods-image group-image"></t-image>
+            )
           }
         },
         {
@@ -120,10 +130,9 @@ export default {
         {
           title: '商品状态',
           dataIndex: 'shelf',
-          scopedSlots: { customRender: 'putaway' }
+          width: 100
         }
       ],
-      // 加载数据方法 必须为 Promise 对象
       data: [],
       tableData: []
     }
@@ -132,12 +141,12 @@ export default {
     rowSelection () {
       return {
         selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange,
-        getCheckboxProps: record => ({
-          props: {
-            disabled: this.disabledRowkeys.includes(+record.id)
-          }
-        })
+        onChange: this.onSelectChange
+        // getCheckboxProps: record => ({
+        //   props: {
+        //     disabled: this.disabledRowkeys.includes(+record.id)
+        //   }
+        // })
       }
     }
   },
@@ -147,9 +156,11 @@ export default {
   },
   methods: {
     getGoods () {
-      getGoods().then(({ list }) => {
+      getGoodsList().then(({ list }) => {
         this.data = clonedeep(list)
         this.tableData = clonedeep(list)
+        this.selectedRowKeys = clonedeep(this.disabledRowkeys)
+        this.setSelectedRow()
       })
     },
     getCategory () {
@@ -176,9 +187,11 @@ export default {
       this.queryParam = {}
       this.tableData = clonedeep(this.data)
     },
-    removeSelected (index) {
-      this.selectedRowKeys.splice(index, 1)
-      this.selectedRows.splice(index, 1)
+    removeSelected ({ id }) {
+      const ids = new Set(this.selectedRowKeys)
+      ids.delete(id)
+      this.selectedRowKeys = Array.from(ids)
+      this.setSelectedRow()
     },
     // 取消选中
     deselect () {
@@ -186,8 +199,25 @@ export default {
       this.selectedRows = []
     },
     onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+      // 全选
+      if (selectedRowKeys.length > this.selectedRowKeys.length) {
+        this.selectedRowKeys = this.sorteduniq([
+          ...this.selectedRowKeys,
+          ...selectedRowKeys
+        ])
+        this.setSelectedRow()
+      } else if (selectedRowKeys.length < this.selectedRowKeys.length) {
+        this.selectedRowKeys = selectedRowKeys
+        this.setSelectedRow()
+      }
+    },
+    setSelectedRow () {
+      this.selectedRows = this.data.filter(row => {
+        return this.selectedRowKeys.indexOf(row.id) > -1
+      })
+    },
+    sorteduniq (arr) {
+      return Array.from(new Set(arr))
     }
   }
 }
@@ -202,5 +232,14 @@ export default {
 .goods-tag {
   margin-right: 5px;
   margin-bottom: 5px;
+}
+.goods-image {
+  /deep/ .image-box {
+    margin: 0;
+    img {
+      width: 35px;
+      height: 35px;
+    }
+  }
 }
 </style>

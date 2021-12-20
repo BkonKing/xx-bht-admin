@@ -95,12 +95,12 @@
           >
           <a
             v-if="record.activity_status === '1'"
-            @click="batchFinish([record.id])"
+            @click="batchFinish([record])"
             >结束</a
           >
           <a
             v-if="['0', '2'].includes(record.activity_status)"
-            @click="batchDelete([record.id])"
+            @click="batchDelete([record])"
             >删除</a
           >
         </span>
@@ -257,26 +257,34 @@ export default {
       }
     },
     // 结束操作
-    batchFinish (id = this.selectedRowKeys) {
+    batchFinish (rows = this.selectedRows) {
+      if (rows.some(obj => obj.activity_status !== '1')) {
+        this.$message.warning('已选择的项中包含不可操作')
+        return
+      }
       const content =
-        id.length > 1 ? `确定结束${id.length}个活动吗？` : '确定结束该活动吗？'
+        rows.length > 1 ? `确定结束${rows.length}个活动吗？` : '确定结束该活动吗？'
       this.confirm({
         title: '结束活动',
         content,
         fn: () => {
-          this.optActivity(id.join(','), 2)
+          this.optActivity(rows.map(obj => obj.id).join(','), 2)
         }
       })
     },
     // 删除操作
-    batchDelete (id = this.selectedRowKeys) {
+    batchDelete (rows = this.selectedRows) {
+      if (rows.some(obj => obj.activity_status === '1')) {
+        this.$message.warning('已选择的项中包含不可操作')
+        return
+      }
       const content =
-        id.length > 1 ? `确定删除${id.length}个活动吗？` : '确定删除该活动吗？'
+        rows.length > 1 ? `确定删除${rows.length}个活动吗？` : '确定删除该活动吗？'
       this.confirm({
         title: '删除活动',
         content,
         fn: () => {
-          this.optActivity(id.join(','), 1)
+          this.optActivity(rows.map(obj => obj.id).join(','), 1)
         }
       })
     },

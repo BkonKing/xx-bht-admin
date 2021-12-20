@@ -55,7 +55,7 @@
         >
           <a-range-picker
             v-model="formData.time"
-            :show-time="{ defaultValue: [defaultTime, defaultTime] }"
+            :show-time="{ defaultValue: [defaultTime, defaultEndTime] }"
             :placeholder="['开始时间', '结束时间']"
             valueFormat="YYYY-MM-DD HH:mm:ss"
             style="width: 100%;"
@@ -67,6 +67,9 @@
             :options="discountsOptions"
             @change="setSuperpositionContent"
           />
+          <div style="color: #00000072;line-height: 1;">
+            勾起代表可叠加，都不未勾起代表不可叠加
+          </div>
         </a-form-model-item>
         <a-form-model-item style="margin-bottom: 0;">
           <template v-slot:label
@@ -189,12 +192,13 @@ export default {
       visible: false,
       confirmLoading: false,
       defaultTime: moment('00:00:00', 'HH:mm:ss'),
+      defaultEndTime: moment('23:59:59', 'HH:mm:ss'),
       loading: false,
       labelCol: { lg: { span: 7 }, sm: { span: 7 } },
       wrapperCol: { lg: { span: 10 }, sm: { span: 10 } },
       calculationOptions: [
         {
-          label: '按原价计算',
+          label: '按原售价计算',
           value: 0
         },
         {
