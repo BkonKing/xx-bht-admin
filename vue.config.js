@@ -9,26 +9,6 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-// const isProd = process.env.NODE_ENV === 'production'
-
-// const assetsCDN = {
-//   // webpack build externals
-//   externals: {
-//     vue: 'Vue',
-//     'vue-router': 'VueRouter',
-//     vuex: 'Vuex',
-//     axios: 'axios'
-//   },
-//   css: [],
-//   // https://unpkg.com/browse/vue@2.6.10/
-//   js: [
-//     '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
-//     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
-//     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-//     '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
-//   ]
-// }
-
 // vue.config.js
 const vueConfig = {
   publicPath: process.env.NODE_ENV === 'production' ? '/new_version' : '/',
@@ -42,8 +22,6 @@ const vueConfig = {
         BUILD_DATE: buildDate
       })
     ]
-    // if prod, add externals
-    // externals: isProd ? assetsCDN.externals : {}
   },
 
   chainWebpack: (config) => {
@@ -66,14 +44,6 @@ const vueConfig = {
         name: 'assets/[name].[hash:8].[ext]'
       })
 
-    // if prod is on
-    // assets require on cdn
-    // if (isProd) {
-    //   config.plugin('html').tap(args => {
-    //     args[0].cdn = assetsCDN
-    //     return args
-    //   })
-    // }
     // 只留下Moment的中文包
     config
       .plugin('ContextReplacementPlugin')
@@ -85,12 +55,15 @@ const vueConfig = {
         .use(WebpackBundleAnalyzer.BundleAnalyzerPlugin)
     }
 
-    // if (process.env.NODE_ENV === 'production') {
-    //   // gzip开启
-    //   config
-    //     .plugin('CompressionPlugin')
-    //     .use(CompressionPlugin, [])
-    // }
+    if (process.env.NODE_ENV === 'production') {
+      config.output.filename('js/[name].js').end()
+      config.output.chunkFilename('js/[name].js').end()
+      // 修改生产配置
+      config.plugin('extract-css').tap(args => [{
+        filename: 'css/[name].css',
+        chunkFilename: 'css/[name].css'
+      }])
+    }
   },
 
   css: {

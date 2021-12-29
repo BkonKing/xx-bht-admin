@@ -15,7 +15,7 @@ export default {
     {
       path: '/permissionManage/personList',
       name: 'personList',
-      component: () => import('@/views/permissionManage/personList'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/permissionManage/personList'),
       meta: {
         title: '人员列表'
       }
@@ -23,7 +23,7 @@ export default {
     {
       path: '/permissionManage/roleManage',
       name: 'roleManage',
-      component: () => import('@/views/permissionManage/roleManage'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/permissionManage/roleManage'),
       meta: {
         title: '角色管理'
       }
@@ -31,7 +31,7 @@ export default {
     {
       path: '/permissionManage/companManage',
       name: 'companManage',
-      component: () => import('@/views/permissionManage/companManage'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/permissionManage/companManage'),
       meta: {
         title: '公司管理'
       }
@@ -39,7 +39,7 @@ export default {
     {
       path: '/permissionManage/operaLog',
       name: 'operaLog',
-      component: () => import('@/views/permissionManage/operaLog'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/permissionManage/operaLog'),
       meta: {
         title: '操作日志'
       }
@@ -47,7 +47,7 @@ export default {
     {
       path: '/permissionManage/permissMenu',
       name: 'permissMenu',
-      component: () => import('@/views/permissionManage/permissMenu'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/permissionManage/permissMenu'),
       meta: {
         title: '权限菜单'
       }

@@ -82,7 +82,7 @@
           <a-form-model-item prop="s_price">
             <a-input
               v-model="group.s_price"
-              v-number-input
+              v-number-input="2"
               prefix="￥"
               @change="handleSPriceChange(group)"
             />
@@ -91,11 +91,7 @@
         <!-- 原价 -->
         <a-col flex="1">
           <a-form-model-item prop="y_price">
-            <a-input
-              v-model="group.y_price"
-              v-number-input
-              prefix="￥"
-            />
+            <a-input v-model="group.y_price" v-number-input="2" prefix="￥" />
           </a-form-model-item>
         </a-col>
         <!-- 会员价 -->
@@ -107,11 +103,7 @@
         <!-- 优享价 -->
         <a-col flex="1">
           <a-form-model-item prop="e_price">
-            <a-input
-              v-model="group.e_price"
-              v-number-input
-              prefix="￥"
-            />
+            <a-input v-model="group.e_price" v-number-input="2" prefix="￥" />
           </a-form-model-item>
         </a-col>
         <!-- 关联仓库 -->
@@ -166,6 +158,7 @@
         <a-col class="jc-center" flex="60px">
           <a-checkbox
             v-model="group.is_combination"
+            @click="judgeSpecs(group)"
             @change="e => handleCombination(e, group)"
           ></a-checkbox>
         </a-col>
@@ -270,7 +263,7 @@
 
 <script>
 import { UploadImage } from '@/components'
-import { getGoodSpec, getSpecInfo } from '@/api/commodity/goods'
+import { getGoodSpec, getSpecInfo, judgeSpecs } from '@/api/commodity/goods'
 import goodsTable from './goodsTable'
 import { sort } from '@/utils/util'
 import NP from 'number-precision'
@@ -356,7 +349,7 @@ export default {
     },
     // 售价变更，更改会员价
     handleSPriceChange (group) {
-      group.vip_price = NP.times(group.s_price, this.discount / 100)
+      group.vip_price = NP.times(group.s_price, this.discount / 100).toFixed(2)
     },
     // 非组合绑定商品
     bindProduct (group) {
@@ -369,6 +362,21 @@ export default {
         'available_stock',
         this.storeGoods[index].available_stock || 0
       )
+    },
+    async judgeSpecs (group) {
+      const { specs_id: specsId, is_combination: isCombination } = group
+      if (!specsId || isCombination) {
+        return
+      }
+      await judgeSpecs({
+        specs_id: specsId
+      }).catch(({ specs_name: specsName, goods_name: goodsName }) => {
+        this.$message.warning(
+            `规格"${specsName}"，是商品"${goodsName}"的组合规格，请先修改`
+        )
+        group.fold = false
+        group.is_combination = false
+      })
     },
     // 触发组合商品
     handleCombination (e, group) {

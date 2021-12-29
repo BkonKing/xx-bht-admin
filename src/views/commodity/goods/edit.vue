@@ -208,14 +208,15 @@
 </template>
 
 <script>
+// /commodity/goods/edit
 import moment from 'moment'
+import clonedeep from 'lodash.clonedeep'
+import { getAllCategory, editGoods, getEditGoods } from '@/api/commodity/goods'
 import PageHeaderView from '@/layouts/PageHeaderView'
 import FooterToolBar from '@/components/FooterToolbar'
 import { UploadImage, kindeditor } from '@/components'
 import supplierTable from './components/supplierTable'
-import { getAllCategory, editGoods, getEditGoods } from '@/api/commodity/goods'
 import ModelTable from './components/modelTable'
-import clonedeep from 'lodash.clonedeep'
 
 export default {
   name: 'goodsEdit',

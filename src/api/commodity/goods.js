@@ -7,7 +7,8 @@ export const goodsApi = {
   getGoodSpec: '/stock/getGoodSpec',
   getSeller: '/combination_json/getSeller',
   goods_edit: '/ajax_commodity/goods_edit',
-  edit_goods: '/combination_json/edit_goods'
+  edit_goods: '/combination_json/edit_goods',
+  judgeSpecs: '/combination_json/judgeSpecs'
 }
 
 // 获取商品分类
@@ -74,6 +75,18 @@ export function getEditGoods (data) {
   return request({
     url: goodsApi.edit_goods,
     method: 'post',
+    data
+  })
+}
+
+// 获取编辑商品的信息
+export function judgeSpecs (data) {
+  return request({
+    url: goodsApi.judgeSpecs,
+    method: 'post',
+    headers: {
+      noToast: true
+    },
     data
   })
 }

@@ -486,6 +486,17 @@ export default {
           this.$message.success('提交成功')
           this.$router.go(-1)
         }
+      }).catch(({ code, message, goods_str: goods }) => {
+        if (code === '202') {
+          const alert = goods ? `"${goods}"` : ''
+          this.$error({
+            title: '活动商品冲突',
+            content: (<div><span style="color: #F5222D;">同个商品不能同时参加两种打拆活动</span>，请修改活动商品 {alert}</div>),
+            icon: () => <a-icon type="close-circle" theme="filled" />
+          })
+        } else {
+          this.$message.error(message)
+        }
       })
     },
     handleAddOk () {

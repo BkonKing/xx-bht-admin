@@ -44,6 +44,9 @@ export function saveActivity (data) {
   return request({
     url: goodsApi.addActivity,
     method: 'post',
+    headers: {
+      noToast: true
+    },
     data
   })
 }
