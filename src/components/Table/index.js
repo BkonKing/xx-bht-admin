@@ -11,6 +11,7 @@ export default {
 
       localLoading: false,
       localDataSource: [],
+      expandedModuleRowKeys: [],
       localPagination: Object.assign({
         showQuickJumper: true,
         pageSizeOptions: this.pageInfo ? this.pageInfo.pageSizeOptions : ['10', '20', '30', '50'],
@@ -101,6 +102,9 @@ export default {
         ascend: 'ascend',
         descend: 'descend'
       })
+    },
+    expandedRowKeys: {
+      type: Array
     }
   }),
   watch: {
@@ -133,6 +137,14 @@ export default {
       Object.assign(this.localPagination, {
         showSizeChanger: val
       })
+    },
+    expandedRowKeys: {
+      handler (newValue) {
+        if (newValue !== this.expandedModuleRowKeys) {
+          this.expandedModuleRowKeys = newValue
+        }
+      },
+      immediate: true
     }
   },
   mounted () {
@@ -306,6 +318,10 @@ export default {
       } else {
         return ''
       }
+    },
+    expandedRowsChange (expandedRowKeys) {
+      this.expandedModuleRowKeys = expandedRowKeys
+      this.$emit('update:expandedRowKeys', this.expandedModuleRowKeys)
     }
   },
 
@@ -341,11 +357,15 @@ export default {
           return props[k]
         }
       }
+      if (k === 'expandedRowKeys') {
+        this[k] && (props[k] = this.expandedModuleRowKeys)
+        return props[k]
+      }
       this[k] && (props[k] = this[k])
       return props[k]
     })
     const table = (
-      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData} onExpand={ (expanded, record) => { this.$emit('expand', expanded, record) } }>
+      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onExpandedRowsChange={this.expandedRowsChange} onChange={this.loadData} onExpand={ (expanded, record) => { this.$emit('expand', expanded, record) } }>
         { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
       </a-table>
     )
