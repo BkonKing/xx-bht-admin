@@ -40,6 +40,9 @@
         rowKey="id"
         :columns="columns"
         :data="loadData"
+        :expandIcon="expandIcon"
+        :expandIconAsCell="false"
+        :expandIconColumnIndex="1"
         :expandedRowRender="expandedRowRender"
       >
         <template slot="action" slot-scope="text, record, index">
@@ -51,71 +54,6 @@
             <a @click="handleEdit(index)">编辑</a>
           </span>
         </template>
-        <!-- <a-table
-          slot="expandedRowRender"
-          slot-scope="expandedData, expandedDataIndex"
-          v-if="
-            expandedData.specs_cost_data && expandedData.specs_cost_data.length
-          "
-          rowKey="specs_id"
-          :columns="innerColumns"
-          :data-source="expandedData.specs_cost_data"
-          :pagination="false"
-          :showHeader="false"
-        >
-          <template slot="cost" slot-scope="costList, row, index">
-            <a-row type="flex" :gutter="20">
-              <template
-                v-if="
-                  tableData[expandedDataIndex] &&
-                    tableData[expandedDataIndex].editable
-                "
-              >
-                <a-col flex="250px" v-for="(item, i) in costList" :key="i">
-                  <a-row type="flex" align="middle">
-                    <a-col flex="100px"
-                      ><a-input
-                        v-model="item.cost_name"
-                        placeholder="批次名称"
-                        :maxLength="15"
-                      ></a-input
-                    ></a-col>
-                    <a-col flex="100px"
-                      ><a-input
-                        v-model="item.cost_price"
-                        prefix="￥"
-                        :maxLength="12"
-                        v-number-input
-                      ></a-input
-                    ></a-col>
-                    <a-icon
-                      type="minus-circle"
-                      style="margin-left: 10px;"
-                      @click="delCost(expandedDataIndex, index, i)"
-                    />
-                  </a-row>
-                </a-col>
-              </template>
-              <template v-else>
-                <a-col v-for="(item, i) in costList" :key="i">
-                  <div>{{ item.cost_name }}</div>
-                  <div>￥{{ item.cost_price }}</div>
-                </a-col>
-              </template>
-            </a-row>
-          </template>
-          <template slot="action" slot-scope="data, row, index">
-            <span
-              v-if="
-                tableData[expandedDataIndex] &&
-                  tableData[expandedDataIndex].editable
-              "
-              class="table-action"
-            >
-              <a @click="addCost(expandedDataIndex, index)">新增成本价</a>
-            </span>
-          </template>
-        </a-table> -->
       </s-table>
     </a-card>
   </page-header-view>
@@ -125,6 +63,7 @@
 // /financialCenter/goodsCost
 import cloneDeep from 'lodash.clonedeep'
 import { STable } from '@/components'
+import { validAForm } from '@/utils/util'
 import { getGoodsCost, saveSpecsCost } from '@/api/financialCenter/index'
 
 export default {
@@ -150,13 +89,16 @@ export default {
         {
           title: '商品名称',
           dataIndex: 'goods_name',
+          align: 'middle',
           width: 130,
           customRender: (text, row) => {
             const href = `/nsolid/commodity/goods?goods_id=${row.id}`
             return (
-              <a class="two-Multi" href={href} target="_blank">
-                {text}
-              </a>
+              <div class="two-Multi-box">
+                <a class="two-Multi" href={href} target="_blank">
+                  {text}
+                </a>
+              </div>
             )
           }
         },
@@ -223,6 +165,19 @@ export default {
     }
   },
   methods: {
+    expandIcon ({ onExpand, record, expanded }) {
+      // 判断展开数据是否有数据
+      if (record.specs_cost_data.length > 0) {
+        const handleClick = e => onExpand(record, e)
+        if (expanded) {
+          return <a-icon type="caret-down" onClick={handleClick} />
+        } else {
+          return <a-icon type="caret-right" onClick={handleClick} />
+        }
+      } else {
+        return <span></span>
+      }
+    },
     expandedRowRender (record, expandedDataIndex) {
       const editable = record && record.editable
       const props = {
@@ -234,54 +189,85 @@ export default {
       }
       const scopedSlots = {
         cost: (data, row, index) => {
-          const editForm = data.map((item, i) => {
-            return (
-              <a-col flex="250px" key={i} class="cost-input-row">
-                <a-row type="flex" align="middle">
-                  <a-col flex="100px">
-                    <a-input
-                      v-model={item.cost_name}
-                      placeholder="批次名称"
-                      maxLength={15}
-                    ></a-input>
-                  </a-col>
-                  <a-col flex="100px">
-                    <a-input
-                      v-model={item.cost_price}
-                      prefix="￥"
-                      maxLength={12}
-                      v-number-input={undefined}
-                    ></a-input>
-                  </a-col>
-                  <a-icon
-                    type="minus-circle"
-                    style="margin-left: 10px;"
-                    onClick={() => {
-                      this.delCost(expandedDataIndex, index, i)
-                    }}
-                  />
-                </a-row>
-              </a-col>
-            )
-          })
-          const textData = data.map((item, i) => {
-            return (
-              <a-col key={i}>
-                <div>{item.cost_name}</div>
-                <div>￥{item.cost_price}</div>
-              </a-col>
-            )
-          })
-          const marginTop = editable ? { marginTop: '-10px' } : ''
-          return (
-            <a-row
-              type="flex"
-              gutter={20}
-              style={marginTop}
+          const rules = {
+            required: true,
+            message: '必填'
+          }
+          const marginTop = { marginTop: '-10px' }
+          const editForm = (
+            <a-form-model
+              ref={`form${expandedDataIndex}${index}`}
+              {...{
+                props: {
+                  model: row
+                }
+              }}
             >
-              {editable ? editForm : textData}
+              <a-row type="flex" gutter={30} style={marginTop}>
+                {row.specs_cost_list.map((item, i) => {
+                  return (
+                    <a-col flex="260px" key={i} class="cost-input-row">
+                      <a-row type="flex">
+                        <a-col flex="100px">
+                          <a-form-model-item
+                            {...{
+                              props: {
+                                prop: `specs_cost_list.${i}.cost_name`,
+                                rules
+                              }
+                            }}
+                          >
+                            <a-input
+                              v-model={item.cost_name}
+                              placeholder="批次名称"
+                              maxLength={15}
+                            ></a-input>
+                          </a-form-model-item>
+                        </a-col>
+                        <a-col flex="100px">
+                          <a-form-model-item
+                            {...{
+                              props: {
+                                prop: `specs_cost_list.${i}.cost_price`,
+                                rules
+                              }
+                            }}
+                          >
+                            <a-input
+                              v-model={item.cost_price}
+                              prefix="￥"
+                              maxLength={12}
+                              v-number-input={undefined}
+                            ></a-input>
+                          </a-form-model-item>
+                        </a-col>
+                        <a-icon
+                          type="minus-circle"
+                          style="margin-top: 7px;margin-left: 10px;font-size: 18px;color: #aaa;"
+                          onClick={() => {
+                            this.delCost(expandedDataIndex, index, i)
+                          }}
+                        />
+                      </a-row>
+                    </a-col>
+                  )
+                })}
+              </a-row>
+            </a-form-model>
+          )
+          const textData = (
+            <a-row type="flex" gutter={30}>
+              {data.map((item, i) => {
+                return (
+                  <a-col key={i}>
+                    <div>{item.cost_name}</div>
+                    <div>￥{item.cost_price}</div>
+                  </a-col>
+                )
+              })}
             </a-row>
           )
+          return editable ? editForm : textData
         },
         action: (data, row, index) => {
           return editable ? (
@@ -308,17 +294,24 @@ export default {
       this.queryParam = {}
       this.refresh(true)
     },
-    save (goodsData) {
-      const specsCostData = goodsData.specs_cost_data.map(obj => {
-        return {
-          goods_id: goodsData.id,
-          ...obj
-        }
-      })
-      saveSpecsCost({
-        specs_cost_data: specsCostData
-      }).then(() => {
-        this.refresh()
+    save (goodsData, expandedIndex) {
+      const { specs_cost_data: specsCostList } = goodsData
+      Promise.all(
+        specsCostList.map((obj, index) => {
+          return validAForm(this.$refs[`form${expandedIndex}${index}`])
+        })
+      ).then(() => {
+        const specsCostData = specsCostList.map(obj => {
+          return {
+            goods_id: goodsData.id,
+            ...obj
+          }
+        })
+        saveSpecsCost({
+          specs_cost_data: specsCostData
+        }).then(() => {
+          this.refresh()
+        })
       })
     },
     handleEdit (index) {
@@ -357,5 +350,14 @@ export default {
 }
 .cost-input-row {
   margin-top: 10px;
+  /deep/ .ant-form-item {
+    margin-bottom: 0;
+  }
+}
+.two-Multi-box {
+  display: inline-block;
+  margin-left: 6px;
+  max-width: calc(100% - 22px);
+  vertical-align: middle;
 }
 </style>

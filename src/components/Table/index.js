@@ -88,6 +88,10 @@ export default {
       type: Boolean,
       default: false
     },
+    expandIconAsCell: {
+      type: Boolean,
+      default: true
+    },
     pageInfo: {
       type: Object,
       default: null
@@ -103,6 +107,7 @@ export default {
         descend: 'descend'
       })
     },
+    expandIconColumnIndex: { type: Number },
     expandedRowKeys: {
       type: Array
     }
@@ -359,6 +364,10 @@ export default {
       }
       if (k === 'expandedRowKeys') {
         this[k] && (props[k] = this.expandedModuleRowKeys)
+        return props[k]
+      }
+      if (k === 'expandIconAsCell') {
+        props[k] = this[k]
         return props[k]
       }
       this[k] && (props[k] = this[k])

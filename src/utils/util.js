@@ -119,3 +119,31 @@ export function sort (data, key) {
     }
   })
 }
+
+// 表单验证
+export function validAForm (ref) {
+  return new Promise((resolve, reject) => {
+    ref.validate(valid => {
+      if (valid) {
+        resolve()
+      } else {
+        reject(new Error(false))
+        return false
+      }
+    })
+  })
+}
+
+// 防抖函数
+export function debounce (fn, delay = 500) {
+  let timer
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    const args = arguments
+    timer = setTimeout(() => {
+      fn.apply(this, args) // 改变this指向为调用debounce所指的对象
+    }, delay)
+  }
+}
