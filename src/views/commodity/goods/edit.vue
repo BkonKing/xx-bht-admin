@@ -187,11 +187,7 @@
           </div>
         </a-form-model-item>
         <a-form-model-item required prop="content" label="详情描述">
-          <kindeditor
-            v-model="imageTextForm.content"
-            :height="500"
-            @input="$refs.imageTextForm.validateField('content')"
-          ></kindeditor>
+          <wang-editor v-model="imageTextForm.content" @change="$refs.imageTextForm.validateField('content')"></wang-editor>
         </a-form-model-item>
       </a-form-model>
     </a-card>
@@ -214,7 +210,8 @@ import clonedeep from 'lodash.clonedeep'
 import { getAllCategory, editGoods, getEditGoods } from '@/api/commodity/goods'
 import PageHeaderView from '@/layouts/PageHeaderView'
 import FooterToolBar from '@/components/FooterToolbar'
-import { UploadImage, kindeditor } from '@/components'
+import { UploadImage } from '@/components'
+import WangEditor from '@/components/Editor/WangEditor'
 import supplierTable from './components/supplierTable'
 import ModelTable from './components/modelTable'
 
@@ -224,9 +221,9 @@ export default {
     PageHeaderView,
     FooterToolBar,
     UploadImage,
-    kindeditor,
     ModelTable,
-    supplierTable
+    supplierTable,
+    WangEditor
   },
   data () {
     const restrictionTime = (rule, value, callback) => {

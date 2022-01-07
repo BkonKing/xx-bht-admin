@@ -7,9 +7,9 @@
       @blur="onEditorBlur($event)"
       @focus="onEditorFocus($event)"
       @ready="onEditorReady($event)"
-      @change="onEditorChange($event)">
+      @change="onEditorChange($event)"
+    >
     </quill-editor>
-
   </div>
 </template>
 
@@ -18,7 +18,10 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
-import { quillEditor } from 'vue-quill-editor'
+import { quillEditor, Quill } from 'vue-quill-editor'
+import { container, ImageExtend, QuillWatch } from 'quill-image-extend-module'
+
+Quill.register('modules/ImageExtend', ImageExtend)
 
 export default {
   name: 'QuillEditor',
@@ -40,7 +43,32 @@ export default {
     return {
       content: null,
       editorOption: {
-        // some quill options
+        modules: {
+          ImageExtend: {
+            loading: true,
+            name: 'imgFile',
+            action: `${
+              process.env.NODE_ENV === 'production'
+                ? process.env.VUE_APP_API_BASE_URL
+                : '/api'
+            }/commodity_special/picLoad`,
+            change: (xhr, formData) => {
+              // xhr.setRequestHeader('myHeader','myValue')
+              formData.append('type', '1')
+            }, // 可选参数 每次选择图片触发，也可用来设置头部，但比headers多了一个参数，可设置formData
+            response: res => {
+              return res.data
+            }
+          },
+          toolbar: {
+            container: container,
+            handlers: {
+              image: function () {
+                QuillWatch.emit(this.quill.id)
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -62,13 +90,16 @@ export default {
   watch: {
     value (val) {
       this.content = val
+    },
+    content (val) {
+      this.$emit('input', val)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-@import url('../index.less');
+@import url("../index.less");
 
 /* 覆盖 quill 默认边框圆角为 ant 默认圆角，用于统一 ant 组件风格 */
 .ant-editor-quill {

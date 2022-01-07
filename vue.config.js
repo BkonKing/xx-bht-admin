@@ -96,6 +96,15 @@ const vueConfig = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/library': {
+        // target: 'https://ytdwz.tosolomo.com/nsolid/spi/v2',
+        target: 'https://bhtdevelop.mhshjy.com',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/library': '/library'
+        }
       }
     }
   },
