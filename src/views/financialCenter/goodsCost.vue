@@ -17,7 +17,6 @@
                 <a-input
                   v-model="queryParam.cost_name"
                   placeholder="名称"
-                  v-number-input
                 ></a-input>
               </a-form-item>
             </a-col>
@@ -43,6 +42,7 @@
         :expandIcon="expandIcon"
         :expandIconAsCell="false"
         :expandIconColumnIndex="1"
+        :expandedRowKeys.sync="expandedRowKeys"
         :expandedRowRender="expandedRowRender"
       >
         <template slot="action" slot-scope="text, record, index">
@@ -51,7 +51,7 @@
             <a @click="handleCancel(index)">取消</a>
           </span>
           <span class="table-action" v-else>
-            <a @click="handleEdit(index)">编辑</a>
+            <a @click="handleEdit(index, record)">编辑</a>
           </span>
         </template>
       </s-table>
@@ -314,10 +314,13 @@ export default {
         })
       })
     },
-    handleEdit (index) {
+    handleEdit (index, { id }) {
       const target = this.tableData[index]
       if (target) {
         this.setEditable(index, true)
+        if (!this.expandedRowKeys.includes(id)) {
+          this.expandedRowKeys.push(id)
+        }
       }
     },
     handleCancel (index) {
@@ -358,6 +361,9 @@ export default {
   display: inline-block;
   margin-left: 6px;
   max-width: calc(100% - 22px);
+  vertical-align: middle;
+}
+/deep/ .anticon-caret-right {
   vertical-align: middle;
 }
 </style>
