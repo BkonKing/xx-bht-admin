@@ -6,7 +6,7 @@
       </div>
       <div class="tag-box">
         <a-tag
-          v-for="(item, index) in selectedRows"
+          v-for="item in selectedRows"
           :key="item.id"
           closable
           class="goods-tag"
@@ -170,13 +170,14 @@ export default {
     },
     // 本地搜索
     search () {
+      const {
+        is_open: isOpen,
+        search,
+        category_id: categoryId
+      } = this.queryParam
+      console.log(isOpen)
       this.tableData = this.data.filter(obj => {
-        const {
-          is_open: isOpen,
-          search,
-          category_id: categoryId
-        } = this.queryParam
-        const isOpenBool = isOpen === undefined || obj.is_open === isOpen
+        const isOpenBool = isOpen === undefined || +obj.is_open === isOpen
         const searchBool =
           !search || obj.goods_name.indexOf(search) > -1 || obj.id == search
         const categoryBool = !categoryId || obj.category_id === categoryId

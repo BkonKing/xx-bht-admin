@@ -524,12 +524,12 @@ export default {
       this.visible = false
     },
     refreshTable () {
+      const {
+        is_open: isOpen,
+        sSearch: search,
+        category_id: categoryId
+      } = this.queryParam
       this.filterTableData = this.allTableData.filter(obj => {
-        const {
-          is_open: isOpen,
-          sSearch: search,
-          category_id: categoryId
-        } = this.queryParam
         const isOpenBool = isOpen === undefined || obj.is_open === isOpen
         const searchBool =
           !search ||
